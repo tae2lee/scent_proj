@@ -160,9 +160,14 @@ input[type=text]{font:inherit;border:1px solid var(--line);background:var(--card
 .tl-years .yr{border:0;background:none;cursor:pointer;font-family:"Oswald",var(--font);font-weight:700;font-size:40px;line-height:1;color:#c9c6bf;padding:0 8px 0 0;letter-spacing:-0.01em}
 .tl-years .yr.on{color:#141414}
 .tl-years .yr.up{font-family:var(--font);font-size:18px;font-weight:800;padding-bottom:5px;margin-left:8px}
-.tl-months{display:flex;gap:4px;flex-wrap:wrap;min-height:30px}
-.tl-months .mo{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;cursor:pointer;color:var(--sub)}
-.tl-months .mo.on{background:#2A2A28;border-color:#2A2A28;color:#fff}
+.tl-months{display:flex;gap:2px;flex-wrap:wrap;align-items:flex-end}
+.tl-months .mo{border:0;background:none;padding:0 6px 0 0;font-family:"Oswald",var(--font);font-weight:700;font-size:26px;line-height:1;cursor:pointer;color:#a9a6a0}
+.tl-months .mo.on{color:#141414}
+.tl-months .mo.off{color:#e1dfda;cursor:default}
+#schedCats{align-items:center}
+.cat-t{border:0;background:none;padding:0 10px 0 0;font-weight:800;font-size:20px;letter-spacing:-0.02em;cursor:pointer;color:#bdbab3}
+.cat-t.on{color:#141414}
+.cat-t:hover{color:#6b6963}
 .tl-wrap{position:relative;margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);overflow:hidden}
 .tl{overflow-x:auto;overflow-y:hidden;cursor:grab;scrollbar-width:thin;outline:none;-webkit-overflow-scrolling:touch}
 .tl.dragging{cursor:grabbing;user-select:none}
@@ -762,8 +767,8 @@ function renderSchedule(){
   const tl = $("#tl");
   const keep = tl ? tl.scrollLeft : null;
   const cats = ["all","release","broadcast","event","awards"];
-  $("#schedCats").innerHTML = cats.map(c => `<button class="pill sm ${c===tlCat?"on":""}" data-c="${c}">${c==="all" ? t("all") : t(CAT_KEY[c])}</button>`).join("")
-    + `<a class="pill sm ghost" style="margin-left:auto" href="https://artist.mnetplus.world/main/stg/rescene-official/schedule/2026/11" target="_blank" rel="noopener">${t("officialSched")} ↗</a>`;
+  $("#schedCats").innerHTML = cats.map(c => `<button class="cat-t ${c===tlCat?"on":""}" data-c="${c}">${c==="all" ? t("all") : t(CAT_KEY[c])}</button>`).join("")
+    + `<a class="pill sm" style="margin-left:auto" href="https://artist.mnetplus.world/main/stg/rescene-official/schedule/2026/11" target="_blank" rel="noopener">${t("officialSched")} ↗</a>`;
   $("#schedCats").querySelectorAll("[data-c]").forEach(b => b.onclick = () => { tlCat = b.dataset.c; tlScrollKeep = "today"; renderSchedule(); });
   $("#schedNote").textContent = t("schedNote");
 
@@ -774,7 +779,7 @@ function renderSchedule(){
   tlMarks = [];
   list.forEach(e => {
     const up = e.d > today;
-    if(up && todayX === null){ x += 40; todayX = x - 30; tlMarks.push({key:"up", year:"up", x:todayX}); html += `<div class="tl-today" style="left:${todayX}px"><span>${t("today")}</span></div>`; }
+    if(up && todayX === null){ x += 40; todayX = x - 30; tlMarks.push({key:"up", year:today.slice(0,4), ym:today.slice(0,7), x:todayX}); html += `<div class="tl-today" style="left:${todayX}px"><span>${t("today")}</span></div>`; }
     const y = e.d.slice(0,4), ym = e.d.slice(0,7);
     if(y !== prevY){ if(prevY) x += 60; html += `<div class="tl-year" style="left:${x}px">${y}</div>`; tlMarks.push({key:y, year:y, x}); prevY = y; prevYM = ""; }
     if(ym !== prevYM){ html += `<div class="tl-month" style="left:${x}px">${esc(monthShort(ym))}</div>`; tlMarks.push({key:ym, year:y, x, month:true, up}); prevYM = ym; x += 34; }
@@ -818,13 +823,14 @@ function activeMark(){
 function renderTlNav(){
   const cur = activeMark() || {};
   const years = tlMarks.filter(m => !m.month && m.key !== "up");
-  const hasUp = tlMarks.some(m => m.key === "up");
   const activeYear = cur.year;
-  $("#tlYears").innerHTML = years.map(m => `<button class="yr ${activeYear===m.key?"on":""}" data-x="${m.x}">${m.key.slice(2)}</button>`).join("")
-    + (hasUp ? `<button class="yr up ${activeYear==="up"?"on":""}" data-x="${tlMarks.find(m=>m.key==="up").x}">${t("upcoming")}</button>` : "");
-  const yr = activeYear === "up" ? (tlMarks.filter(m => m.month && m.up).map(m => m.year)[0]) : activeYear;
-  const months = tlMarks.filter(m => m.month && m.year === yr && (activeYear === "up" ? m.up : true));
-  $("#tlMonths").innerHTML = months.map(m => `<button class="mo ${cur.key===m.key?"on":""}" data-x="${m.x}">${esc(monthShort(m.key))}</button>`).join("");
+  const activeYM = cur.month ? cur.key : (cur.key === "up" ? cur.ym : "");
+  $("#tlYears").innerHTML = years.map(m => `<button class="yr ${activeYear===m.key?"on":""}" data-x="${m.x}">${m.key.slice(2)}</button>`).join("");
+  const mm = Array.from({length:12}, (_, i) => String(i+1).padStart(2,"0"));
+  $("#tlMonths").innerHTML = mm.map(m => {
+    const mk = tlMarks.find(x => x.month && x.key === `${activeYear}-${m}`);
+    return mk ? `<button class="mo ${activeYM===mk.key?"on":""}" data-x="${mk.x}">${m}</button>` : `<span class="mo off">${m}</span>`;
+  }).join("");
   document.querySelectorAll("#tlYears [data-x], #tlMonths [data-x]").forEach(b => b.onclick = () => $("#tl").scrollTo({left: Math.max(0, Number(b.dataset.x) - 40), behavior:"smooth"}));
 }
 let dragMoved = false;
