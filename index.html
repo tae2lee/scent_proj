@@ -916,7 +916,8 @@ function setupTlInput(){
   tl.addEventListener("pointerdown", e => { if(e.pointerType !== "mouse") return; down = true; dragMoved = false; sx = e.clientX; sl = tl.scrollLeft; });
   window.addEventListener("pointermove", e => { if(!down) return; const dx = e.clientX - sx; if(Math.abs(dx) > 5){ dragMoved = true; tl.classList.add("dragging"); } tl.scrollLeft = sl - dx; });
   window.addEventListener("pointerup", () => { if(!down) return; down = false; tl.classList.remove("dragging"); setTimeout(() => dragMoved = false, 0); });
-  tl.addEventListener("wheel", e => { if(Math.abs(e.deltaY) > Math.abs(e.deltaX)){ tl.scrollLeft += e.deltaY; e.preventDefault(); } }, {passive:false});
+  // vertical wheel scrolls the page; Shift+wheel or a trackpad swipe moves the timeline
+  tl.addEventListener("wheel", e => { if(e.shiftKey && !e.deltaX && e.deltaY){ tl.scrollLeft += e.deltaY; e.preventDefault(); } }, {passive:false});
   let raf = 0;
   tl.addEventListener("scroll", () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(renderTlNav); });
   document.querySelector(".tl-arrow.l").onclick = () => tl.scrollBy({left: -tl.clientWidth * 0.8, behavior:"smooth"});
