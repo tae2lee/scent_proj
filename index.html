@@ -168,7 +168,9 @@ input[type=text]{font:inherit;border:1px solid var(--line);background:var(--card
 .cat-t{border:0;background:none;padding:0 10px 0 0;font-weight:800;font-size:20px;letter-spacing:-0.02em;cursor:pointer;color:#bdbab3}
 .cat-t.on{color:#141414}
 .cat-t:hover{color:#6b6963}
-.tl-wrap{position:relative;margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);overflow:hidden}
+html,body{overflow-x:clip}
+.tl-wrap{position:relative;margin-top:4px;width:100vw;margin-left:calc(50% - 50vw);background:none;border:0;border-radius:0;overflow:hidden}
+.tl{scrollbar-width:none}.tl::-webkit-scrollbar{display:none}
 .tl{overflow-x:auto;overflow-y:hidden;cursor:grab;scrollbar-width:thin;outline:none;-webkit-overflow-scrolling:touch}
 .tl.dragging{cursor:grabbing;user-select:none}
 .tl.dragging .tl-ev{pointer-events:none}
@@ -198,7 +200,7 @@ input[type=text]{font:inherit;border:1px solid var(--line);background:var(--card
 .tl-ev:hover .tl-ttl{text-decoration:underline;text-decoration-thickness:2px;text-decoration-color:#141414}
 .tl-ev.up .tl-card{opacity:.75}
 .tl-ev.up .tl-num{color:#fff}
-.tl-arrow{position:absolute;top:258px;z-index:3;width:40px;height:44px;border:0;background:rgba(255,255,255,.92);font-size:26px;line-height:1;cursor:pointer;color:#141414;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.tl-arrow{position:absolute;top:258px;z-index:3;width:40px;height:44px;border:0;background:var(--bg);font-size:26px;line-height:1;cursor:pointer;color:#141414;box-shadow:0 2px 8px rgba(0,0,0,.10)}
 .tl-arrow.l{left:0;border-radius:0 10px 10px 0}
 .tl-arrow.r{right:0;border-radius:10px 0 0 10px}
 @media (hover:none){.tl-arrow{display:none}}
@@ -835,6 +837,7 @@ function evThumb(e){
     return covers[r.id] ? `<span class="tl-th"><img src="${esc(covers[r.id])}" alt=""></span>` : `<span class="tl-th" style="background:${r.color}88">${icon(r.icon)}</span>`; }
   return "";
 }
+function tlGut(){ const tl = $("#tl"), ref = $("#schedCats"); if(!tl || !ref || !tl.clientWidth) return 40; return Math.max(16, Math.round(ref.getBoundingClientRect().left - tl.getBoundingClientRect().left)); }
 function renderSchedule(){
   const tl = $("#tl");
   const keep = tl ? tl.scrollLeft : null;
@@ -847,7 +850,8 @@ function renderSchedule(){
   const today = todayStr();
   const list = EVENTS.filter(e => tlCat === "all" || e.c === tlCat).slice().sort((a,b) => a.d.localeCompare(b.d));
   const COL = 150, H = 560;
-  let x = 40, html = "", prevY = "", prevYM = "", todayX = null, n = 0;
+  const GUT = tlGut();
+  let x = GUT, html = "", prevY = "", prevYM = "", todayX = null, n = 0;
   tlMarks = [];
   list.forEach(e => {
     const up = e.d > today;
@@ -869,7 +873,7 @@ function renderSchedule(){
       </button>`;
     x += COL;
   });
-  const W = x + 220;
+  const W = x + 220 + GUT;
   const band = todayX === null ? `<div class="tl-band" style="width:${W}px"></div>`
     : `<div class="tl-band" style="width:${todayX}px"></div><div class="tl-band up" style="left:${todayX}px;width:${W-todayX}px"></div>`;
   $("#tlInner").style.width = W + "px";
@@ -887,7 +891,7 @@ function renderSchedule(){
   renderTlNav();
 }
 function activeMark(){
-  const tl = $("#tl"); const pos = tl.scrollLeft + 90;
+  const tl = $("#tl"); const pos = tl.scrollLeft + tlGut() + 50;
   let cur = tlMarks[0];
   tlMarks.forEach(m => { if(m.x <= pos) cur = m; });
   return cur;
@@ -903,7 +907,7 @@ function renderTlNav(){
     const mk = tlMarks.find(x => x.month && x.key === `${activeYear}-${m}`);
     return mk ? `<button class="mo ${activeYM===mk.key?"on":""}" data-x="${mk.x}">${m}</button>` : `<span class="mo off">${m}</span>`;
   }).join("");
-  document.querySelectorAll("#tlYears [data-x], #tlMonths [data-x]").forEach(b => b.onclick = () => $("#tl").scrollTo({left: Math.max(0, Number(b.dataset.x) - 40), behavior:"smooth"}));
+  document.querySelectorAll("#tlYears [data-x], #tlMonths [data-x]").forEach(b => b.onclick = () => $("#tl").scrollTo({left: Math.max(0, Number(b.dataset.x) - tlGut()), behavior:"smooth"}));
 }
 let dragMoved = false;
 function setupTlInput(){
@@ -917,6 +921,8 @@ function setupTlInput(){
   tl.addEventListener("scroll", () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(renderTlNav); });
   document.querySelector(".tl-arrow.l").onclick = () => tl.scrollBy({left: -tl.clientWidth * 0.8, behavior:"smooth"});
   document.querySelector(".tl-arrow.r").onclick = () => tl.scrollBy({left: tl.clientWidth * 0.8, behavior:"smooth"});
+  let rz = 0, lastGut = tlGut();
+  window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { const g = tlGut(); if(g !== lastGut){ const sl = tl.scrollLeft; lastGut = g; renderSchedule(); tl.scrollLeft = sl; } }, 150); });
   tl.addEventListener("keydown", e => { if(e.key === "ArrowRight") tl.scrollBy({left: 300, behavior:"smooth"}); if(e.key === "ArrowLeft") tl.scrollBy({left: -300, behavior:"smooth"}); });
 }
 let openEv = null;
