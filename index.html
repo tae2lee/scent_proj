@@ -6,7 +6,7 @@
 <title>RESCENE ARCHIVE</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;800&family=Noto+Sans+JP:wght@400;500;700;800&family=Noto+Sans+SC:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Oswald:wght@500;700&family=Noto+Sans+KR:wght@400;500;700;800&family=Noto+Sans+JP:wght@400;500;700;800&family=Noto+Sans+SC:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#F5F5F3; --card:#FFFFFF; --ink:#141414; --sub:#77756F; --line:#E6E4DF; --soft:#F0EFEB;
@@ -101,7 +101,7 @@ a.pill:hover,button.pill:hover{border-color:#bdbab3}
 .ev .tags{margin-top:8px;display:flex;flex-wrap:wrap;gap:4px}
 .tag{font-size:12px;background:var(--soft);border-radius:6px;padding:2px 8px;font-weight:500}
 .cat{font-size:11px;font-weight:700;border-radius:6px;padding:2px 8px;display:inline-flex;align-items:center;gap:5px;background:var(--soft)}
-.ev .win{margin-top:6px;font-size:13px;font-weight:700;background:#FFF1E8;border-radius:8px;padding:5px 10px;display:inline-block}
+.ev .win{margin-top:6px;font-size:13px;font-weight:700;background:var(--soft);border-radius:8px;padding:5px 10px;display:inline-block}
 .ev .acts{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
 
 /* members */
@@ -153,6 +153,62 @@ input[type=text]{font:inherit;border:1px solid var(--line);background:var(--card
 .btn:disabled{opacity:.35}
 .row2{display:grid;gap:10px;grid-template-columns:1fr 1fr}
 @media (max-width:560px){.row2{grid-template-columns:1fr}.shead{grid-template-columns:84px 1fr}}
+
+/* horizontal timeline */
+.tl-nav{display:flex;flex-direction:column;gap:8px}
+.tl-years{display:flex;gap:4px;align-items:flex-end;flex-wrap:wrap}
+.tl-years .yr{border:0;background:none;cursor:pointer;font-family:"Oswald",var(--font);font-weight:700;font-size:40px;line-height:1;color:#c9c6bf;padding:0 8px 0 0;letter-spacing:-0.01em}
+.tl-years .yr.on{color:#141414}
+.tl-years .yr.up{font-family:var(--font);font-size:18px;font-weight:800;padding-bottom:5px;margin-left:8px}
+.tl-months{display:flex;gap:4px;flex-wrap:wrap;min-height:30px}
+.tl-months .mo{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;cursor:pointer;color:var(--sub)}
+.tl-months .mo.on{background:#2A2A28;border-color:#2A2A28;color:#fff}
+.tl-wrap{position:relative;margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);overflow:hidden}
+.tl{overflow-x:auto;overflow-y:hidden;cursor:grab;scrollbar-width:thin;outline:none;-webkit-overflow-scrolling:touch}
+.tl.dragging{cursor:grabbing;user-select:none}
+.tl.dragging .tl-ev{pointer-events:none}
+.tl-inner{position:relative}
+.tl-band{position:absolute;left:0;top:238px;height:84px;background:#2A2A28}
+.tl-band.up{background:repeating-linear-gradient(135deg,#8E8C86 0 10px,#9D9B95 10px 20px)}
+.tl-year{position:absolute;top:18px;font-family:"Oswald",var(--font);font-weight:700;font-size:56px;line-height:1;color:#141414;letter-spacing:-0.01em;pointer-events:none}
+.tl-month{position:absolute;top:244px;color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;pointer-events:none;padding-left:6px;border-left:2px solid rgba(255,255,255,.8);height:72px}
+.tl-today{position:absolute;top:90px;bottom:20px;border-left:2px dashed #141414;pointer-events:none}
+.tl-today span{position:absolute;top:-2px;left:6px;font-size:11px;font-weight:800;background:#141414;color:#fff;border-radius:6px;padding:2px 7px;white-space:nowrap}
+.tl-ev{position:absolute;width:228px;border:0;background:none;padding:0;text-align:left;cursor:pointer;display:flex;flex-direction:column;font:inherit;color:inherit}
+.tl-ev.top{bottom:238px;justify-content:flex-end}
+.tl-ev.bot{top:238px}
+.tl-num{font-family:"Oswald",var(--font);font-weight:700;font-size:38px;line-height:42px;height:84px;color:#fff;display:block;letter-spacing:.01em}
+.tl-ev.top .tl-num{order:2}
+.tl-card{display:flex;flex-direction:column;gap:3px;padding:10px 6px 10px 0;max-width:212px}
+.tl-ev.top .tl-card{padding:0 6px 10px 0}
+.tl-meta{display:flex;gap:6px;align-items:center;font-size:11px;font-weight:800;color:var(--sub);letter-spacing:.02em;text-transform:uppercase}
+.tl-uni{color:var(--sub);font-weight:700}
+.tl-win{font-size:12px}
+.tl-ttl{font-weight:800;font-size:15px;line-height:1.25;letter-spacing:-0.02em;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.tl-pl{font-size:12px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl-th{width:30px;height:30px;border-radius:7px;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;margin-top:4px}
+.tl-th img{width:100%;height:100%;object-fit:cover}
+.tl-th svg{width:16px;height:16px;opacity:.75}
+.tl-org{align-self:flex-start;margin-top:4px;font-size:10px;font-weight:800;letter-spacing:.06em;border:1px solid var(--line);border-radius:6px;padding:2px 6px;color:var(--sub)}
+.tl-ev:hover .tl-ttl{text-decoration:underline;text-decoration-thickness:2px;text-decoration-color:#141414}
+.tl-ev.up .tl-card{opacity:.75}
+.tl-ev.up .tl-num{color:#fff}
+.tl-arrow{position:absolute;top:258px;z-index:3;width:40px;height:44px;border:0;background:rgba(255,255,255,.92);font-size:26px;line-height:1;cursor:pointer;color:#141414;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.tl-arrow.l{left:0;border-radius:0 10px 10px 0}
+.tl-arrow.r{right:0;border-radius:10px 0 0 10px}
+@media (hover:none){.tl-arrow{display:none}}
+.evtop{padding:24px 22px;display:grid;grid-template-columns:92px 1fr;gap:18px;background:var(--card);border-bottom:1px solid var(--line)}
+.evnum{background:#2A2A28;color:#fff;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 0;font-family:"Oswald",var(--font);font-size:36px;line-height:1.05;height:max-content}
+.evtop .k{font-size:13px;color:var(--sub);font-weight:600}
+.evtop .t{font-size:26px;font-weight:800;letter-spacing:-0.03em;line-height:1.15;margin-top:4px;padding-right:30px}
+.evtop p{margin:6px 0 0;font-size:14px;color:var(--sub)}
+.evtop .win{margin-top:8px;font-size:13px;font-weight:700;background:var(--soft);border-radius:8px;padding:5px 10px;display:inline-block}
+.hm{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.hm-item{display:inline-flex;align-items:center;gap:2px}
+.hm-del{border:0;background:none;color:var(--sub);cursor:pointer;font-size:15px}
+.hm-form{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.hm-form input{width:160px}
+.hm-form select{font:inherit;border:1px solid var(--line);background:var(--card);border-radius:var(--r-btn);padding:7px 10px}
 footer{padding:0 0 40px;font-size:12px;color:var(--sub)}
 </style>
 </head>
@@ -174,10 +230,17 @@ footer{padding:0 0 40px;font-size:12px;color:var(--sub)}
   </section>
 
   <section id="schedule">
-    <div class="row" id="schedYears"></div>
-    <div class="row" id="schedCats" style="margin-top:8px"></div>
-    <p class="note" id="schedNote" style="margin-top:12px"></p>
-    <div id="sched"></div>
+    <div class="tl-nav">
+      <div class="tl-years" id="tlYears"></div>
+      <div class="tl-months" id="tlMonths"></div>
+    </div>
+    <div class="row" id="schedCats" style="margin-top:12px"></div>
+    <div class="tl-wrap">
+      <button class="tl-arrow l" aria-label="previous">‹</button>
+      <div class="tl" id="tl" tabindex="0"><div class="tl-inner" id="tlInner"></div></div>
+      <button class="tl-arrow r" aria-label="next">›</button>
+    </div>
+    <p class="note" id="schedNote" style="margin-top:10px"></p>
   </section>
 
   <section id="members">
@@ -247,7 +310,7 @@ const T = {
   catAwards:{ko:"시상식",en:"Awards",zh:"颁奖典礼",ja:"授賞式"},
   catUni:{ko:"대학 축제",en:"Campus festivals",zh:"大学庆典",ja:"大学祭"},
   won:{ko:"수상",en:"Won",zh:"获奖",ja:"受賞"},
-  schedNote:{ko:"키워드는 팬들이 직캠 제목에 쓰는 형식(날짜 6자리 + 장소 + 리센느)이에요. 눌러서 비공식 직캠을 찾아보세요.",en:"Keywords follow how fans title their fancams (YYMMDD + place + RESCENE). Tap to find unofficial fancams.",zh:"关键词沿用粉丝给直拍命名的格式（6位日期 + 地点 + RESCENE），点击即可查找非官方直拍。",ja:"キーワードはファンが推しカメラのタイトルに使う形式（日付6桁＋場所＋RESCENE）です。タップして非公式の推しカメラを探せます。"},
+  schedNote:{ko:"옆으로 밀거나 드래그해서 보세요. 일정을 누르면 직캠, 팬 트위터, 홈마 계정을 볼 수 있어요.",en:"Swipe or drag sideways. Tap an event for fancams, fan posts and fan-site accounts.",zh:"左右滑动或拖动查看。点击日程可查看直拍、粉丝推文与站姐账号。",ja:"横にスワイプ・ドラッグして見られます。予定をタップすると推しカメラ、ファンのX、ホームマスターのアカウントを表示します。"},
   findFancam:{ko:"직캠 찾기",en:"Find fancams",zh:"查找直拍",ja:"推しカメラを探す"},
   allVideos:{ko:"영상 전체",en:"All videos",zh:"全部视频",ja:"すべての動画"},
   officialSched:{ko:"공식 일정 보기 (Mnet Plus)",en:"Official schedule (Mnet Plus)",zh:"官方日程 (Mnet Plus)",ja:"公式スケジュール (Mnet Plus)"},
@@ -285,6 +348,15 @@ const T = {
   spChallenge:{ko:"챌린지",en:"Challenge",zh:"挑战",ja:"チャレンジ"},
   spSpecial:{ko:"스페셜 무대",en:"Special stage",zh:"特别舞台",ja:"スペシャルステージ"},
   spMedley:{ko:"하이라이트 메들리",en:"Highlight medley",zh:"精彩串烧",ja:"ハイライトメドレー"},
+  upcoming:{ko:"추가 예정",en:"Upcoming",zh:"即将到来",ja:"今後の予定"},
+  today:{ko:"오늘",en:"Today",zh:"今天",ja:"今日"},
+  videos:{ko:"영상 · 직캠",en:"Videos & fancams",zh:"视频·直拍",ja:"動画・推しカメラ"},
+  fanX:{ko:"팬 트위터 (X)",en:"Fan posts on X",zh:"粉丝 X（推特）",ja:"ファンのX（Twitter）"},
+  xSearch:{ko:"이 일정 X에서 보기",en:"See this day on X",zh:"在 X 查看当天",ja:"この日をXで見る"},
+  hmNone:{ko:"아직 등록된 홈마 계정이 없어요.",en:"No fan-site accounts added yet.",zh:"还没有添加站姐账号。",ja:"まだホームマスターのアカウントがありません。"},
+  hmHint:{ko:"홈마 계정을 누르면 그날 그 계정이 올린 글만 X에서 보여 줘요.",en:"Tap an account to see only what it posted that day.",zh:"点击账号即可在 X 查看该账号当天的发文。",ja:"アカウントをタップすると、その日の投稿だけをXで表示します。"},
+  hmAdd:{ko:"홈마 계정 추가",en:"Add account",zh:"添加账号",ja:"アカウント追加"},
+  swipe:{ko:"옆으로 밀어서 보기",en:"Swipe sideways",zh:"左右滑动查看",ja:"横にスワイプ"},
   coverUp:{ko:"커버 이미지 올리기",en:"Upload cover",zh:"上传封面",ja:"カバー画像をアップロード"},
   coverRe:{ko:"커버 바꾸기",en:"Replace cover",zh:"更换封面",ja:"カバーを変更"},
   coverDel:{ko:"커버 지우기",en:"Remove cover",zh:"删除封面",ja:"カバーを削除"},
@@ -403,12 +475,12 @@ const icon = k => `<svg viewBox="0 0 64 64" fill="#111" aria-hidden="true">${ICO
 const U = (ko, en) => ({ko:`${ko} 축제`, en:`${en} festival`, zh:`${en} 校园庆典`, ja:`${en} 学園祭`});
 const S = (ko, en, zh, ja) => ({ko, en, zh: zh || en, ja: ja || en});
 const EVENTS = [
-  {d:"2026-11-29", c:"event", kw:"팬사인회", t:S("[PULSE] 팬사인회 (WHOSFAN)","[PULSE] fansign (WHOSFAN)","[PULSE] 签售会（WHOSFAN）","[PULSE] サイン会（WHOSFAN）")},
-  {d:"2026-11-27", c:"event", kw:"팬사인회", t:S("[PULSE] 팬사인회 (WITHMUU)","[PULSE] fansign (WITHMUU)","[PULSE] 签售会（WITHMUU）","[PULSE] サイン会（WITHMUU）")},
-  {d:"2026-11-22", c:"event", kw:"팬사인회", t:S("[PULSE] 팬사인회 (MAKESTAR)","[PULSE] fansign (MAKESTAR)","[PULSE] 签售会（MAKESTAR）","[PULSE] サイン会（MAKESTAR）")},
+  {d:"2026-11-29", c:"event", kw:"팬사인회", org:"WHOSFAN", t:S("[PULSE] 팬사인회 (WHOSFAN)","[PULSE] fansign (WHOSFAN)","[PULSE] 签售会（WHOSFAN）","[PULSE] サイン会（WHOSFAN）")},
+  {d:"2026-11-27", c:"event", kw:"팬사인회", org:"WITHMUU", t:S("[PULSE] 팬사인회 (WITHMUU)","[PULSE] fansign (WITHMUU)","[PULSE] 签售会（WITHMUU）","[PULSE] サイン会（WITHMUU）")},
+  {d:"2026-11-22", c:"event", kw:"팬사인회", org:"MAKESTAR", t:S("[PULSE] 팬사인회 (MAKESTAR)","[PULSE] fansign (MAKESTAR)","[PULSE] 签售会（MAKESTAR）","[PULSE] サイン会（MAKESTAR）")},
   {d:"2026-11-20", c:"awards", kw:"MAMA", t:S("2026 MAMA AWARDS","2026 MAMA AWARDS"), p:S("오사카","Osaka","大阪","大阪")},
   {d:"2026-11-14", c:"awards", kw:"MMA 멜론뮤직어워드", t:S("2026 멜론 뮤직 어워드 (MMA)","2026 Melon Music Awards (MMA)","2026 Melon 音乐大奖 (MMA)","2026 Melon Music Awards (MMA)")},
-  {d:"2026-11-08", c:"event", kw:"팬사인회", t:S("[PULSE] 팬사인회 (MAKESTAR)","[PULSE] fansign (MAKESTAR)","[PULSE] 签售会（MAKESTAR）","[PULSE] サイン会（MAKESTAR）")},
+  {d:"2026-11-08", c:"event", kw:"팬사인회", org:"MAKESTAR", t:S("[PULSE] 팬사인회 (MAKESTAR)","[PULSE] fansign (MAKESTAR)","[PULSE] 签售会（MAKESTAR）","[PULSE] サイン会（MAKESTAR）")},
   {d:"2026-11-07", c:"awards", kw:"KGMA", t:S("2026 KGMA (원이 첫날 MC)","2026 KGMA (Woni hosts day 1)","2026 KGMA（元伊担任首日MC）","2026 KGMA（ウォニが初日MC）"), p:S("고척스카이돔","Gocheok Sky Dome","高尺巨蛋","高尺スカイドーム")},
   {d:"2026-11-06", c:"broadcast", kw:"뮤직뱅크 With", r:"pulse", t:S("뮤직뱅크 With 컴백 무대","Music Bank: With comeback stage","音乐银行 With 回归舞台","ミュージックバンク With カムバック")},
   {d:"2026-11-03", c:"release", kw:"PULSE 쇼케이스", r:"pulse", t:S("미니 4집 PULSE 발매 · 쇼케이스","4th EP PULSE release & showcase","第四张迷你专辑 PULSE 发行·Showcase","4thミニ PULSE リリース・ショーケース"), p:S("블루스퀘어","Blue Square")},
@@ -582,6 +654,7 @@ function showTab(id){
   if(!TABS.some(x => x[0] === id)) id = "albums";
   currentTab = id;
   document.querySelectorAll("section").forEach(s => s.classList.toggle("on", s.id === id));
+  if(id === "schedule" && tlFirst && $("#tlInner").innerHTML) renderSchedule();
   renderTabs();
 }
 window.addEventListener("hashchange", () => showTab(location.hash.slice(1)));
@@ -606,7 +679,7 @@ function renderAlbums(){
 let stageSong = 0, openId = null;
 function openAlbum(id, keep){
   if(openId !== id || !keep) stageSong = Math.max(0, RELEASES.find(x => x.id === id).tracks.findIndex(tr => tr[1]));
-  openId = id;
+  openId = id; openEv = null;
   const r = relById(id);
   const clean = nm => nm.replace(/\s*\(.*\)/,"");
   const rows = r.tracks.map((tr, i) => {
@@ -668,45 +741,170 @@ function openAlbum(id, keep){
   const go = $("#sheet [data-goscent]");
   if(go) go.onclick = () => { closeModal(); scentAlbum = id; renderScent(); showTab("scent"); };
 }
-function closeModal(){ $("#modal").classList.remove("on"); openId = null; }
+function closeModal(){ $("#modal").classList.remove("on"); openId = null; openEv = null; }
 $("#modal").onclick = e => { if(e.target.id === "modal") closeModal(); };
 document.addEventListener("keydown", e => { if(e.key === "Escape") closeModal(); });
 
-/* ================= schedule ================= */
-let schedYear = "2026", schedCat = "all";
+/* ================= schedule: horizontal timeline ================= */
+const ACCENT = "#2A2A28";
+let tlFirst = true, tlCat = "all", hmItems = [], canEditHm = false, tlMarks = [], tlScrollKeep = null;
+function todayStr(){ return new Date(Date.now() + 9*3600e3).toISOString().slice(0,10); }
+function nextDay(d){ const [y,m,dd] = d.split("-").map(Number); return new Date(Date.UTC(y, m-1, dd+1)).toISOString().slice(0,10); }
+function monthShort(ym){ const [y,m] = ym.split("-").map(Number); return new Intl.DateTimeFormat(LOC(), {month:"short", timeZone:"UTC"}).format(new Date(Date.UTC(y, m-1, 1))); }
+const xs = q => "https://x.com/search?q=" + encodeURIComponent(q) + "&f=live";
+function evThumb(e){
+  if(e.org) return `<span class="tl-org">${esc(e.org)}</span>`;
+  if(e.r){ const r = relById(e.r); if(!r) return "";
+    return covers[r.id] ? `<span class="tl-th"><img src="${esc(covers[r.id])}" alt=""></span>` : `<span class="tl-th" style="background:${r.color}88">${icon(r.icon)}</span>`; }
+  return "";
+}
 function renderSchedule(){
-  const years = [...new Set(EVENTS.map(e => e.d.slice(0,4)))].sort().reverse();
-  $("#schedYears").innerHTML = [["all", t("all")], ...years.map(y => [y, y])].map(([v,lbl]) => `<button class="pill ${v===schedYear?"on":""}" data-y="${v}">${lbl}</button>`).join("")
-    + `<a class="pill ghost" style="margin-left:auto" href="https://artist.mnetplus.world/main/stg/rescene-official/schedule/2026/11" target="_blank" rel="noopener">${t("officialSched")} ↗</a>`;
-  $("#schedYears").querySelectorAll("[data-y]").forEach(b => b.onclick = () => { schedYear = b.dataset.y; renderSchedule(); });
-  const cats = ["all","release","broadcast","event","uni","awards"];
-  $("#schedCats").innerHTML = cats.map(c => `<button class="pill sm ${c===schedCat?"on":""}" data-c="${c}">${c==="all" ? t("all") : c==="uni" ? t("catUni") : t(CAT_KEY[c])}</button>`).join("");
-  $("#schedCats").querySelectorAll("[data-c]").forEach(b => b.onclick = () => { schedCat = b.dataset.c; renderSchedule(); });
+  const tl = $("#tl");
+  const keep = tl ? tl.scrollLeft : null;
+  const cats = ["all","release","broadcast","event","awards"];
+  $("#schedCats").innerHTML = cats.map(c => `<button class="pill sm ${c===tlCat?"on":""}" data-c="${c}">${c==="all" ? t("all") : t(CAT_KEY[c])}</button>`).join("")
+    + `<a class="pill sm ghost" style="margin-left:auto" href="https://artist.mnetplus.world/main/stg/rescene-official/schedule/2026/11" target="_blank" rel="noopener">${t("officialSched")} ↗</a>`;
+  $("#schedCats").querySelectorAll("[data-c]").forEach(b => b.onclick = () => { tlCat = b.dataset.c; tlScrollKeep = "today"; renderSchedule(); });
   $("#schedNote").textContent = t("schedNote");
 
-  const list = EVENTS.filter(e => (schedYear === "all" || e.d.startsWith(schedYear)) && (schedCat === "all" || (schedCat === "uni" ? e.uni : e.c === schedCat)))
-                     .sort((a,b) => b.d.localeCompare(a.d));
-  let html = "", month = "";
+  const today = todayStr();
+  const list = EVENTS.filter(e => tlCat === "all" || e.c === tlCat).slice().sort((a,b) => a.d.localeCompare(b.d));
+  const COL = 150, H = 560;
+  let x = 40, html = "", prevY = "", prevYM = "", todayX = null, n = 0;
+  tlMarks = [];
   list.forEach(e => {
-    const ym = e.d.slice(0,7);
-    if(ym !== month){ month = ym; html += `<div class="month">${monthLabel(ym)}</div>`; }
-    const code = yymmdd(e.d);
-    const kws = [code, ...e.kw.split(" "), "리센느"].filter(Boolean);
-    const base = `${code} 리센느 ${e.kw}`;
-    html += `<div class="ev">
-      <div class="day"><b>${Number(e.d.slice(8,10))}</b><span>${weekday(e.d)}</span></div>
-      <div>
-        <div class="ttl"><span class="cat"><span class="dot" style="background:${CAT_COLOR[e.c]}"></span>${t(CAT_KEY[e.c])}</span>${e.uni ? `<span class="cat">${t("catUni")}</span>` : ""}${esc(L(e.t))}</div>
-        ${e.p ? `<div class="pl">📍 ${esc(L(e.p))}</div>` : ""}
-        ${e.win ? `<div class="win">🏆 ${t("won")} · ${esc(L(e.win))}</div>` : ""}
-        <div class="tags">${kws.map(k => `<span class="tag">#${esc(k)}</span>`).join("")}</div>
-        <div class="acts">
-          <a class="pill sm" href="${yt(base)}" target="_blank" rel="noopener">${t("everyone")} ↗</a>
-          ${MEMBERS.map(m => `<a class="pill sm" href="${yt(e.c === "broadcast" ? `${code} 리센느 ${m.name.ko} ${e.kw}` : `${code} 리센느 ${m.name.ko} 직캠 ${e.kw}`)}" target="_blank" rel="noopener"><span class="dot" style="background:${m.color}"></span>${esc(memberName(m))}</a>`).join("")}
-        </div>
-      </div></div>`;
+    const up = e.d > today;
+    if(up && todayX === null){ x += 40; todayX = x - 30; tlMarks.push({key:"up", year:"up", x:todayX}); html += `<div class="tl-today" style="left:${todayX}px"><span>${t("today")}</span></div>`; }
+    const y = e.d.slice(0,4), ym = e.d.slice(0,7);
+    if(y !== prevY){ if(prevY) x += 60; html += `<div class="tl-year" style="left:${x}px">${y}</div>`; tlMarks.push({key:y, year:y, x}); prevY = y; prevYM = ""; }
+    if(ym !== prevYM){ html += `<div class="tl-month" style="left:${x}px">${esc(monthShort(ym))}</div>`; tlMarks.push({key:ym, year:y, x, month:true, up}); prevYM = ym; x += 34; }
+    const top = n++ % 2 === 0;
+    const idx = EVENTS.indexOf(e);
+    html += `<button class="tl-ev ${top?"top":"bot"} ${up?"up":""}" style="left:${x}px" data-ev="${idx}">
+        ${top ? "" : `<span class="tl-num">${e.d.slice(5,7)}<br>${e.d.slice(8,10)}</span>`}
+        <span class="tl-card">
+          <span class="tl-meta"><span class="tl-cat">${t(CAT_KEY[e.c])}</span>${e.uni ? `<span class="tl-uni">${t("catUni")}</span>` : ""}${e.win ? `<span class="tl-win">🏆</span>` : ""}</span>
+          <span class="tl-ttl">${esc(L(e.t))}</span>
+          ${e.p ? `<span class="tl-pl">${esc(L(e.p))}</span>` : ""}
+          ${evThumb(e)}
+        </span>
+        ${top ? `<span class="tl-num">${e.d.slice(5,7)}<br>${e.d.slice(8,10)}</span>` : ""}
+      </button>`;
+    x += COL;
   });
-  $("#sched").innerHTML = html;
+  const W = x + 220;
+  const band = todayX === null ? `<div class="tl-band" style="width:${W}px"></div>`
+    : `<div class="tl-band" style="width:${todayX}px"></div><div class="tl-band up" style="left:${todayX}px;width:${W-todayX}px"></div>`;
+  $("#tlInner").style.width = W + "px";
+  $("#tlInner").style.height = H + "px";
+  $("#tlInner").innerHTML = band + html;
+  $("#tlInner").querySelectorAll("[data-ev]").forEach(b => b.onclick = ev => { if(dragMoved) { ev.preventDefault(); return; } openEvent(Number(b.dataset.ev)); });
+
+  // where to land
+  if((tlFirst || tlScrollKeep === "today") && tl.clientWidth > 0){
+    const tx = todayX !== null ? todayX : W;
+    tl.scrollLeft = Math.max(0, tx - tl.clientWidth * 0.7);
+    tlFirst = false;
+  } else if(keep !== null) tl.scrollLeft = keep;
+  tlScrollKeep = null;
+  renderTlNav();
+}
+function activeMark(){
+  const tl = $("#tl"); const pos = tl.scrollLeft + 90;
+  let cur = tlMarks[0];
+  tlMarks.forEach(m => { if(m.x <= pos) cur = m; });
+  return cur;
+}
+function renderTlNav(){
+  const cur = activeMark() || {};
+  const years = tlMarks.filter(m => !m.month && m.key !== "up");
+  const hasUp = tlMarks.some(m => m.key === "up");
+  const activeYear = cur.year;
+  $("#tlYears").innerHTML = years.map(m => `<button class="yr ${activeYear===m.key?"on":""}" data-x="${m.x}">${m.key.slice(2)}</button>`).join("")
+    + (hasUp ? `<button class="yr up ${activeYear==="up"?"on":""}" data-x="${tlMarks.find(m=>m.key==="up").x}">${t("upcoming")}</button>` : "");
+  const yr = activeYear === "up" ? (tlMarks.filter(m => m.month && m.up).map(m => m.year)[0]) : activeYear;
+  const months = tlMarks.filter(m => m.month && m.year === yr && (activeYear === "up" ? m.up : true));
+  $("#tlMonths").innerHTML = months.map(m => `<button class="mo ${cur.key===m.key?"on":""}" data-x="${m.x}">${esc(monthShort(m.key))}</button>`).join("");
+  document.querySelectorAll("#tlYears [data-x], #tlMonths [data-x]").forEach(b => b.onclick = () => $("#tl").scrollTo({left: Math.max(0, Number(b.dataset.x) - 40), behavior:"smooth"}));
+}
+let dragMoved = false;
+function setupTlInput(){
+  const tl = $("#tl");
+  let down = false, sx = 0, sl = 0;
+  tl.addEventListener("pointerdown", e => { if(e.pointerType !== "mouse") return; down = true; dragMoved = false; sx = e.clientX; sl = tl.scrollLeft; });
+  window.addEventListener("pointermove", e => { if(!down) return; const dx = e.clientX - sx; if(Math.abs(dx) > 5){ dragMoved = true; tl.classList.add("dragging"); } tl.scrollLeft = sl - dx; });
+  window.addEventListener("pointerup", () => { if(!down) return; down = false; tl.classList.remove("dragging"); setTimeout(() => dragMoved = false, 0); });
+  tl.addEventListener("wheel", e => { if(Math.abs(e.deltaY) > Math.abs(e.deltaX)){ tl.scrollLeft += e.deltaY; e.preventDefault(); } }, {passive:false});
+  let raf = 0;
+  tl.addEventListener("scroll", () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(renderTlNav); });
+  document.querySelector(".tl-arrow.l").onclick = () => tl.scrollBy({left: -tl.clientWidth * 0.8, behavior:"smooth"});
+  document.querySelector(".tl-arrow.r").onclick = () => tl.scrollBy({left: tl.clientWidth * 0.8, behavior:"smooth"});
+  tl.addEventListener("keydown", e => { if(e.key === "ArrowRight") tl.scrollBy({left: 300, behavior:"smooth"}); if(e.key === "ArrowLeft") tl.scrollBy({left: -300, behavior:"smooth"}); });
+}
+let openEv = null;
+function openEvent(i){
+  openEv = i; openId = null;
+  const e = EVENTS[i];
+  const code = yymmdd(e.d);
+  const base = `${code} 리센느 ${e.kw}`;
+  const kws = [code, ...e.kw.split(" "), "리센느"].filter(Boolean);
+  const until = nextDay(e.d);
+  const hms = hmItems.filter(h => h && /^[A-Za-z0-9_]{1,15}$/.test(h.h));
+  const memById = id => MEMBERS.find(m => m.id === id);
+  $("#sheet").innerHTML = `<button class="x" data-close aria-label="close">×</button>
+    <div class="evtop">
+      <div class="evnum"><b>${e.d.slice(5,7)}</b><b>${e.d.slice(8,10)}</b></div>
+      <div>
+        <div class="k">${e.d.slice(0,4)}.${e.d.slice(5,7)}.${e.d.slice(8,10)} (${weekday(e.d)}) · ${t(CAT_KEY[e.c])}${e.uni ? " · " + t("catUni") : ""}</div>
+        <div class="t">${esc(L(e.t))}</div>
+        ${e.p ? `<p>📍 ${esc(L(e.p))}</p>` : ""}
+        ${e.win ? `<div class="win">🏆 ${t("won")} · ${esc(L(e.win))}</div>` : ""}
+        <div class="row" style="margin-top:10px">${kws.map(k => `<span class="tag">#${esc(k)}</span>`).join("")}</div>
+      </div>
+    </div>
+    <div class="body">
+      <div class="box">
+        <h4>${t("videos")}</h4>
+        <div class="row">
+          <a class="pill" href="${yt(base)}" target="_blank" rel="noopener">${t("everyone")} ↗</a>
+          ${MEMBERS.map(m => `<a class="pill" href="${yt(e.c === "broadcast" ? `${code} 리센느 ${m.name.ko} ${e.kw}` : `${code} 리센느 ${m.name.ko} 직캠 ${e.kw}`)}" target="_blank" rel="noopener"><span class="dot" style="background:${m.color}"></span>${esc(memberName(m))} ↗</a>`).join("")}
+        </div>
+      </div>
+      <div class="box">
+        <h4>${t("fanX")}</h4>
+        <div class="row"><a class="pill" href="${xs(base)}" target="_blank" rel="noopener">𝕏 ${t("xSearch")} ↗</a></div>
+        ${hms.length ? `<div class="hm">${hms.map((h, k) => { const m = memById(h.m); return `<span class="hm-item"><a class="pill sm" href="${xs(`from:${h.h} since:${e.d} until:${until}`)}" target="_blank" rel="noopener">${m ? `<span class="dot" style="background:${m.color}"></span>` : ""}@${esc(h.h)}${m ? ` · ${esc(memberName(m))}` : ""} ↗</a>${canEditHm ? `<button class="hm-del" data-del="${k}" aria-label="remove">×</button>` : ""}</span>`; }).join("")}</div>
+          <p class="note" style="margin:8px 0 0">${t("hmHint")}</p>` : `<p class="note" style="margin:10px 0 0">${t("hmNone")}</p>`}
+        ${canEditHm ? `<form class="hm-form" id="hmForm">
+            <input type="text" id="hmH" placeholder="@handle" maxlength="16" required>
+            <select id="hmM"><option value="">${t("everyone")}</option>${MEMBERS.map(m => `<option value="${m.id}">${esc(memberName(m))}</option>`).join("")}</select>
+            <button class="pill sm" type="submit">${t("hmAdd")}</button>
+          </form>` : ""}
+      </div>
+    </div>`;
+  $("#modal").classList.add("on");
+  $("#sheet [data-close]").onclick = closeModal;
+  const f = $("#hmForm");
+  if(f) f.onsubmit = async ev => {
+    ev.preventDefault();
+    const h = $("#hmH").value.trim().replace(/^@/, "");
+    if(!/^[A-Za-z0-9_]{1,15}$/.test(h)) return;
+    if(hmItems.some(x => x.h.toLowerCase() === h.toLowerCase())) return;
+    await saveHm([...hmItems, {h, m: $("#hmM").value}]);
+  };
+  $("#sheet").querySelectorAll("[data-del]").forEach(b => b.onclick = () => saveHm(hmItems.filter((_, k) => k !== Number(b.dataset.del))));
+}
+async function saveHm(items){
+  if(!db) return;
+  try { await db.doc("homemasters/list").set({items}); hmItems = items; } catch(e){}
+  if(openEv !== null && $("#modal").classList.contains("on")) openEvent(openEv);
+}
+function watchHm(){
+  db.doc("homemasters/list").onSnapshot(s => {
+    const v = s.exists ? s.data() : null;
+    hmItems = v && Array.isArray(v.items) ? v.items.filter(x => x && typeof x.h === "string").map(x => ({h:x.h, m:typeof x.m === "string" ? x.m : ""})) : [];
+    if(openEv !== null && $("#modal").classList.contains("on")) openEvent(openEv);
+  }, () => {});
 }
 
 /* ================= members ================= */
@@ -858,8 +1056,8 @@ function watchCovers(){
       const v = d.data();
       if(v && typeof v.id === "string" && /^[A-Za-z0-9_.:@+~-]+$/.test(v.id)){ coverDocs[d.id] = v; covers[d.id] = "/_blob/" + v.id; }
     });
-    renderAlbums(); renderScent();
-    if($("#modal").classList.contains("on") && openId) openAlbum(openId, true);
+    renderAlbums(); renderScent(); renderSchedule();
+    if($("#modal").classList.contains("on")){ if(openId) openAlbum(openId, true); else if(openEv !== null) openEvent(openEv); }
   }, () => {});
 }
 async function initVoting(){
@@ -868,7 +1066,8 @@ async function initVoting(){
   try { [db, user] = await Promise.all([window.claude ? claude.use("db") : null, window.claude ? claude.use("user") : null]); } catch(e){ db = null; }
   if(!db){ setStatus("vNoDb"); renderScent(); return; }
   try { assets = await claude.use("assets"); } catch(e){ assets = null; }
-  watchCovers();
+  try { canEditHm = !!(user && await user.canEdit()); } catch(e){ canEditHm = false; }
+  watchCovers(); watchHm();
   try { me = user ? await user.id() : null; } catch(e){ me = null; }
   let allowed = null;
   try { allowed = user ? await user.can("data.write") : null; } catch(e){}
@@ -899,6 +1098,7 @@ function renderAll(){
   renderLangMenu(); renderStatic(); renderTabs(); renderAlbums(); renderSchedule(); renderMembers(); renderScent();
   if($("#modal").classList.contains("on") && openId) openAlbum(openId, true);
 }
+setupTlInput();
 document.documentElement.lang = LANG;
 showTab(location.hash.slice(1));
 renderAll();
