@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RESCENE ARCHIVE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;700;800&family=Noto+Sans+JP:wght@400;500;700;800&family=Noto+Sans+SC:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F5F3; --card:#FFFFFF; --ink:#141414; --sub:#77756F; --line:#E6E4DF; --soft:#F0EFEB;
+  --r-card:18px; --r-box:12px; --r-btn:10px;
+  --font:"Pretendard","Pretendard JP","Inter","Noto Sans KR","Noto Sans JP","Noto Sans SC",system-ui,-apple-system,sans-serif;
+}
+html:lang(ja){--font:"Pretendard JP","Inter","Noto Sans JP","Noto Sans KR","Noto Sans SC",system-ui,sans-serif}
+html:lang(zh){--font:"Inter","Noto Sans SC","Noto Sans KR","Noto Sans JP",system-ui,sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;letter-spacing:-0.01em}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+
+header{padding:36px 0 18px}
+header .wrap{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.logo{font-weight:800;font-size:44px;letter-spacing:-0.04em;line-height:1}
+.lang{position:relative}
+.lang-btn{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:var(--r-btn);padding:8px 12px;cursor:pointer;font-weight:600;font-size:14px}
+.lang-btn .caret{font-size:9px;color:var(--sub)}
+.lang-menu{position:absolute;right:0;top:calc(100% + 6px);background:var(--card);border:1px solid var(--line);border-radius:var(--r-box);padding:6px;min-width:160px;box-shadow:0 10px 28px rgba(0,0,0,.07);display:none;z-index:30}
+.lang.open .lang-menu{display:block}
+.lang-menu button{display:flex;width:100%;align-items:center;gap:10px;border:0;background:none;padding:9px 10px;border-radius:8px;cursor:pointer;font-size:14px;text-align:left}
+.lang-menu button:hover,.lang-menu button.on{background:var(--soft)}
+.lang-menu .code{font-weight:700;width:24px}
+.lang-menu .nm{color:var(--sub)}
+
+nav{position:sticky;top:0;z-index:20;background:rgba(245,245,243,.94);backdrop-filter:blur(10px);padding:10px 0;border-bottom:1px solid var(--line)}
+.seg{display:inline-flex;gap:2px;background:var(--card);border:1px solid var(--line);border-radius:var(--r-box);padding:4px;overflow-x:auto;max-width:100%}
+.seg button{border:0;background:none;padding:8px 18px;border-radius:8px;cursor:pointer;font-weight:600;white-space:nowrap;color:var(--sub)}
+.seg button.on{background:var(--ink);color:#fff}
+
+main.wrap{padding-top:22px;padding-bottom:80px}
+section{display:none}
+section.on{display:block}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.pill{border:1px solid var(--line);background:var(--card);padding:7px 12px;border-radius:var(--r-btn);cursor:pointer;font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+.pill.on{background:var(--ink);border-color:var(--ink);color:#fff}
+.pill.sm{padding:5px 10px;font-size:12px;border-radius:8px}
+.pill.ghost{background:transparent}
+a.pill:hover,button.pill:hover{border-color:#bdbab3}
+.note{font-size:12px;color:var(--sub)}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0}
+
+/* album grid */
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px;margin-top:16px}
+.tile{display:flex;flex-direction:column;justify-content:flex-start;background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);padding:10px 10px 14px;cursor:pointer;text-align:left;transition:box-shadow .15s, transform .15s}
+.tile:hover{box-shadow:0 8px 24px rgba(0,0,0,.06);transform:translateY(-2px)}
+.cover{aspect-ratio:1/1;border-radius:var(--r-box);overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;background:var(--soft)}
+.cover img{width:100%;height:100%;object-fit:cover;display:block}
+.cover .ph{display:flex;flex-direction:column;align-items:center;gap:10px;color:rgba(20,20,20,.55);font-size:11px;font-weight:600}
+.cover .ph svg{width:44px;height:44px;opacity:.85}
+.tile .info{padding:12px 4px 0}
+.tile .t{font-size:17px;font-weight:700;letter-spacing:-0.02em;line-height:1.25}
+.tile .k{font-size:12px;color:var(--sub);margin-top:2px}
+.tile .chips{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:11px;font-weight:600;background:var(--soft);border-radius:6px;padding:3px 8px;display:inline-flex;align-items:center;gap:5px}
+
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(20,20,20,.4);display:none;align-items:flex-start;justify-content:center;padding:32px 14px;z-index:50;overflow:auto}
+.modal.on{display:flex}
+.sheet{background:var(--bg);border-radius:22px;max-width:720px;width:100%;overflow:hidden;position:relative}
+.sheet .top{padding:22px;display:grid;grid-template-columns:180px 1fr;gap:20px;align-items:start;background:var(--card);border-bottom:1px solid var(--line)}
+.sheet .top .cover{width:180px}
+.sheet .top .k{font-size:13px;color:var(--sub);font-weight:600}
+.sheet .top .t{font-size:32px;font-weight:800;letter-spacing:-0.03em;line-height:1.1;margin-top:2px}
+.sheet .top p{margin:10px 0 0;font-size:14px}
+.x{position:absolute;right:14px;top:14px;width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--card);cursor:pointer;font-size:17px;z-index:2}
+.sheet .body{padding:16px 22px 24px;display:grid;gap:12px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);padding:16px}
+.box h4{margin:0 0 8px;font-size:13px;color:var(--sub);font-weight:700}
+.trk{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line);flex-wrap:wrap}
+.trk:first-of-type{border-top:0}
+.trk .n{width:20px;color:var(--sub);font-weight:600;font-size:13px}
+.trk .nm{flex:1;min-width:150px;font-weight:600}
+.trk .nm a:hover{text-decoration:underline}
+.trk .nm .play{display:inline-block;width:22px;height:22px;border-radius:7px;background:var(--ink);color:#fff;font-size:9px;line-height:22px;text-align:center;margin-right:8px;vertical-align:1px}
+.badge{font-size:10px;font-weight:800;background:var(--ink);color:#fff;padding:2px 6px;border-radius:5px;margin-left:6px;vertical-align:2px}
+.trk .sub{font-size:12px;color:var(--sub);margin-left:6px;font-weight:500}
+.upl{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.upl input{display:none}
+@media (max-width:560px){.sheet .top{grid-template-columns:1fr}.sheet .top .cover{width:140px}.logo{font-size:32px}}
+
+/* schedule */
+.month{font-size:20px;font-weight:800;margin:26px 0 10px;letter-spacing:-0.02em}
+.ev{background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);padding:14px 16px;display:grid;grid-template-columns:58px 1fr;gap:14px;margin-bottom:8px}
+.ev .day{text-align:center;border-radius:var(--r-box);padding:8px 0;background:var(--soft);height:max-content}
+.ev .day b{display:block;font-size:20px;line-height:1.1}
+.ev .day span{font-size:11px;color:var(--sub);font-weight:600}
+.ev .ttl{font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ev .pl{font-size:13px;color:var(--sub);margin-top:2px}
+.ev .tags{margin-top:8px;display:flex;flex-wrap:wrap;gap:4px}
+.tag{font-size:12px;background:var(--soft);border-radius:6px;padding:2px 8px;font-weight:500}
+.cat{font-size:11px;font-weight:700;border-radius:6px;padding:2px 8px;display:inline-flex;align-items:center;gap:5px;background:var(--soft)}
+.ev .win{margin-top:6px;font-size:13px;font-weight:700;background:#FFF1E8;border-radius:8px;padding:5px 10px;display:inline-block}
+.ev .acts{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+
+/* members */
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.mem{background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);padding:18px;display:flex;flex-direction:column;gap:12px}
+.mem .nm{font-size:26px;font-weight:800;letter-spacing:-0.03em;line-height:1;display:flex;align-items:center;gap:8px}
+.mem .en{font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.06em;margin-top:6px}
+.mem .home{font-size:12px;color:var(--sub)}
+.mem .grp{display:grid;gap:6px;margin-top:auto}
+.mem .grp a{display:flex;justify-content:space-between;align-items:center;background:var(--soft);border-radius:var(--r-btn);padding:9px 12px;font-size:13px;font-weight:600}
+.mem .grp a:hover{background:#e7e5e0}
+
+/* scent */
+.shead{background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);padding:16px;margin:14px 0;display:grid;grid-template-columns:120px 1fr;gap:18px;align-items:center}
+.shead .lbl{font-size:12px;color:var(--sub);font-weight:600}
+.shead .nm{font-size:28px;font-weight:800;line-height:1.1;letter-spacing:-0.03em}
+.shead p{margin:8px 0 0;font-size:14px}
+.vstatus{font-size:13px;color:var(--sub);margin:4px 0 12px}
+.cands{display:grid;gap:8px}
+.cand{background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);padding:16px;position:relative;overflow:hidden}
+.cand.mine{border-color:var(--ink)}
+.cand .bar{position:absolute;left:0;top:0;bottom:0;background:var(--tint,#eee);opacity:.22;z-index:0;transition:width .4s}
+.cand > *:not(.bar){position:relative;z-index:1}
+.cand .tp{display:flex;gap:12px;align-items:flex-start}
+.cand .rank{font-size:18px;font-weight:800;width:24px;color:var(--sub)}
+.cand .info{flex:1;min-width:0}
+.cand .br{font-size:12px;color:var(--sub);font-weight:600}
+.cand .pn{font-weight:700;font-size:16px}
+.cand .why{font-size:13px;margin-top:6px}
+.cand .notes{margin-top:8px;display:flex;flex-wrap:wrap;gap:4px}
+.cand .notes span{font-size:11px;background:var(--soft);padding:2px 8px;border-radius:6px;font-weight:500}
+.cand .side{text-align:right;min-width:84px}
+.cand .cnt{font-size:20px;font-weight:800;line-height:1.1}
+.cand .pct{font-size:12px;color:var(--sub)}
+.vote{margin-top:8px;border:1px solid var(--ink);background:var(--card);font-size:13px;font-weight:700;padding:6px 12px;border-radius:var(--r-btn);cursor:pointer}
+.vote.on{background:var(--ink);color:#fff}
+.vote:disabled{opacity:.35;cursor:default}
+.by{font-size:11px;color:var(--sub);margin-top:4px;font-weight:600}
+.memos{margin-top:8px;display:grid;gap:4px}
+.memos q{font-size:12px;color:var(--sub)}
+.memo{display:flex;gap:6px;margin-top:10px}
+.memo input{flex:1}
+input[type=text]{font:inherit;border:1px solid var(--line);background:var(--card);border-radius:var(--r-btn);padding:9px 12px;color:var(--ink);width:100%}
+.nom{margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);padding:14px 16px}
+.nom summary{cursor:pointer;font-weight:700}
+.nom form{display:grid;gap:10px;margin-top:12px}
+.nom label{font-size:12px;color:var(--sub);display:block;margin:0 0 4px 2px;font-weight:600}
+.btn{border:0;background:var(--ink);color:#fff;font-weight:700;padding:10px 16px;border-radius:var(--r-btn);cursor:pointer;display:inline-block}
+.btn:disabled{opacity:.35}
+.row2{display:grid;gap:10px;grid-template-columns:1fr 1fr}
+@media (max-width:560px){.row2{grid-template-columns:1fr}.shead{grid-template-columns:84px 1fr}}
+footer{padding:0 0 40px;font-size:12px;color:var(--sub)}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="logo">RESCENE ARCHIVE</div>
+  <div class="lang" id="lang">
+    <button class="lang-btn" id="langBtn" aria-haspopup="listbox"><span id="langFlag">🇰🇷</span><span id="langCode">ko</span><span class="caret">▼</span></button>
+    <div class="lang-menu" id="langMenu" role="listbox"></div>
+  </div>
+</div></header>
+
+<nav><div class="wrap"><div class="seg" id="tabs"></div></div></nav>
+
+<main class="wrap">
+  <section id="albums">
+    <div class="row" id="albumFilters"></div>
+    <div class="tiles" id="tiles"></div>
+  </section>
+
+  <section id="schedule">
+    <div class="row" id="schedYears"></div>
+    <div class="row" id="schedCats" style="margin-top:8px"></div>
+    <p class="note" id="schedNote" style="margin-top:12px"></p>
+    <div id="sched"></div>
+  </section>
+
+  <section id="members">
+    <div class="mgrid" id="mgrid"></div>
+  </section>
+
+  <section id="scent">
+    <div class="row" id="scentAlbums"></div>
+    <div id="scentHead"></div>
+    <div class="vstatus" id="vstatus"></div>
+    <div class="cands" id="cands"></div>
+    <details class="nom" id="nomBox">
+      <summary data-i="nomSummary"></summary>
+      <form id="nomForm">
+        <div class="row2">
+          <div><label data-i="fBrand"></label><input type="text" id="nBrand" maxlength="40" required></div>
+          <div><label data-i="fName"></label><input type="text" id="nName" maxlength="60" required></div>
+        </div>
+        <div><label data-i="fNotes"></label><input type="text" id="nNotes" maxlength="80"></div>
+        <div><label data-i="fWhy"></label><input type="text" id="nWhy" maxlength="120" required></div>
+        <div class="row"><button class="btn" type="submit" data-i="fSubmit"></button><span class="note" id="nomMsg"></span></div>
+      </form>
+    </details>
+    <p class="note" style="margin-top:16px" data-i="scentDisclaimer"></p>
+  </section>
+</main>
+
+<footer><div class="wrap" data-i="footer"></div></footer>
+
+<div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+
+<script>
+/* ================= i18n ================= */
+const LANGS = [
+  {id:"ko", code:"ko", flag:"🇰🇷", name:"한국어", locale:"ko-KR"},
+  {id:"en", code:"en", flag:"🇺🇸", name:"English", locale:"en-US"},
+  {id:"zh", code:"ch", flag:"🇨🇳", name:"中文", locale:"zh-CN"},
+  {id:"ja", code:"jp", flag:"🇯🇵", name:"日本語", locale:"ja-JP"}
+];
+const T = {
+  tabAlbums:{ko:"앨범",en:"Albums",zh:"专辑",ja:"アルバム"},
+  tabSchedule:{ko:"일정",en:"Schedule",zh:"日程",ja:"スケジュール"},
+  tabMembers:{ko:"멤버",en:"Members",zh:"成员",ja:"メンバー"},
+  tabScent:{ko:"향",en:"Scent",zh:"香气",ja:"香り"},
+  albumsH:{ko:"앨범",en:"Albums",zh:"专辑",ja:"アルバム"},
+  scheduleH:{ko:"일정",en:"Schedule",zh:"日程",ja:"スケジュール"},
+  membersH:{ko:"멤버",en:"Members",zh:"成员",ja:"メンバー"},
+  scentH:{ko:"앨범의 향",en:"The scent of each album",zh:"每张专辑的香气",ja:"アルバムの香り"},
+  all:{ko:"전체",en:"All",zh:"全部",ja:"すべて"},
+  fMini:{ko:"미니",en:"EP",zh:"迷你",ja:"ミニ"},
+  fSingle:{ko:"싱글",en:"Single",zh:"单曲",ja:"シングル"},
+  fJapan:{ko:"일본",en:"Japan",zh:"日本",ja:"日本"},
+  scentWord:{ko:"향",en:"scent",zh:"香",ja:"の香り"},
+  tracks:{ko:"수록곡",en:"Tracks",zh:"收录曲",ja:"収録曲"},
+  trackHint:{ko:"곡 이름을 누르면 YouTube Music에서 들을 수 있어요.",en:"Tap a song name to listen on YouTube Music.",zh:"点击曲名即可在 YouTube Music 收听。",ja:"曲名をタップするとYouTube Musicで聴けます。"},
+  fancamFor:{ko:"직캠 멤버",en:"Fancam member",zh:"直拍成员",ja:"推しカメラのメンバー"},
+  mv:{ko:"MV",en:"MV",zh:"MV",ja:"MV"},
+  stage:{ko:"무대",en:"Stage",zh:"舞台",ja:"ステージ"},
+  fancam:{ko:"직캠",en:"Fancam",zh:"直拍",ja:"推しカメラ"},
+  focusCam:{ko:"Focus cam",en:"Focus cam",zh:"Focus cam",ja:"Focus cam"},
+  external:{ko:"외부 콘텐츠",en:"Guest appearances",zh:"外部节目",ja:"外部コンテンツ"},
+  ownChannel:{ko:"원이 개인 채널",en:"Woni's own channel",zh:"元伊个人频道",ja:"ウォニの個人チャンネル"},
+  voteScent:{ko:"이 앨범의 향 투표하기",en:"Vote for this album's scent",zh:"为这张专辑的香气投票",ja:"このアルバムの香りに投票"},
+  catRelease:{ko:"발매",en:"Release",zh:"发行",ja:"リリース"},
+  catBroadcast:{ko:"방송",en:"Broadcast",zh:"节目",ja:"放送"},
+  catEvent:{ko:"행사",en:"Event",zh:"活动",ja:"イベント"},
+  catAwards:{ko:"시상식",en:"Awards",zh:"颁奖典礼",ja:"授賞式"},
+  catUni:{ko:"대학 축제",en:"Campus festivals",zh:"大学庆典",ja:"大学祭"},
+  won:{ko:"수상",en:"Won",zh:"获奖",ja:"受賞"},
+  schedNote:{ko:"키워드는 팬들이 직캠 제목에 쓰는 형식(날짜 6자리 + 장소 + 리센느)이에요. 눌러서 비공식 직캠을 찾아보세요.",en:"Keywords follow how fans title their fancams (YYMMDD + place + RESCENE). Tap to find unofficial fancams.",zh:"关键词沿用粉丝给直拍命名的格式（6位日期 + 地点 + RESCENE），点击即可查找非官方直拍。",ja:"キーワードはファンが推しカメラのタイトルに使う形式（日付6桁＋場所＋RESCENE）です。タップして非公式の推しカメラを探せます。"},
+  findFancam:{ko:"직캠 찾기",en:"Find fancams",zh:"查找直拍",ja:"推しカメラを探す"},
+  allVideos:{ko:"영상 전체",en:"All videos",zh:"全部视频",ja:"すべての動画"},
+  officialSched:{ko:"공식 일정 보기 (Mnet Plus)",en:"Official schedule (Mnet Plus)",zh:"官方日程 (Mnet Plus)",ja:"公式スケジュール (Mnet Plus)"},
+  ambassador:{ko:"홍보대사",en:"ambassador",zh:"宣传大使",ja:"広報大使"},
+  hometown:{ko:"출신",en:"from",zh:"出身",ja:"出身"},
+  noScentPG:{ko:"공식 향 없음",en:"No official scent",zh:"无官方香气",ja:"公式の香りなし"},
+  vLoading:{ko:"투표 정보를 불러오는 중이에요…",en:"Loading votes…",zh:"正在加载投票…",ja:"投票を読み込み中…"},
+  vReady:{ko:"앨범마다 한 표. 다시 누르면 취소, 다른 향을 누르면 바뀌어요.",en:"One vote per album. Tap again to cancel, tap another to switch.",zh:"每张专辑一票。再点一次取消，点其他香水即可更换。",ja:"アルバムごとに1票。もう一度押すと取り消し、別の香水を押すと変更できます。"},
+  vReadOnly:{ko:"결과 보기 전용이에요. 투표는 공유받은 사람이 로그인했을 때 할 수 있어요.",en:"View only. Voting works for people this page is shared with, when signed in.",zh:"仅可查看。被分享此页面并登录的人才能投票。",ja:"閲覧のみです。このページを共有され、ログインしている人が投票できます。"},
+  vNoDb:{ko:"투표 결과를 불러올 수 없는 환경이에요. 후보 목록만 보여요.",en:"Votes can't load here. Showing candidates only.",zh:"此环境无法加载投票，仅显示候选。",ja:"ここでは投票を読み込めません。候補のみ表示します。"},
+  vSlow:{ko:"투표 결과를 아직 불러오지 못했어요. 연결을 확인해 주세요.",en:"Votes haven't loaded yet. Check your connection.",zh:"投票尚未加载，请检查网络。",ja:"投票がまだ読み込めません。接続を確認してください。"},
+  vFail:{ko:"투표 결과를 불러오지 못했어요.",en:"Couldn't load votes.",zh:"无法加载投票。",ja:"投票を読み込めませんでした。"},
+  vDenied:{ko:"이 링크로는 결과 보기만 할 수 있어요. 투표하려면 Contributor 이상으로 공유받아야 해요.",en:"This link is view only. Voting needs Contributor access or higher.",zh:"此链接仅可查看。投票需要 Contributor 以上权限。",ja:"このリンクは閲覧のみです。投票にはContributor以上の権限が必要です。"},
+  vFull:{ko:"저장 공간이 가득 찼어요. 아카이브 주인에게 알려 주세요.",en:"Storage is full. Please tell the archive owner.",zh:"存储已满，请告知管理员。",ja:"保存容量がいっぱいです。管理者に知らせてください。"},
+  vRetry:{ko:"잠시 저장하지 못했어요. 조금 뒤 다시 눌러 주세요.",en:"Couldn't save. Try again in a moment.",zh:"暂时无法保存，请稍后再试。",ja:"保存できませんでした。少し後でもう一度お試しください。"},
+  pick:{ko:"이 향",en:"This one",zh:"选这款",ja:"これ"},
+  myPick:{ko:"내 선택 ✓",en:"My pick ✓",zh:"我的选择 ✓",ja:"私の一票 ✓"},
+  votes:{ko:"표",en:"votes",zh:"票",ja:"票"},
+  memoPh:{ko:"이 향을 맡으면 떠오르는 장면 한 줄 (선택)",en:"One line: the scene this scent brings back (optional)",zh:"一句话：闻到这款香会想起的画面（选填）",ja:"この香りで思い出す場面をひとこと（任意）"},
+  memoSave:{ko:"남기기",en:"Save",zh:"留言",ja:"残す"},
+  fanPick:{ko:"팬 추천",en:"Fan pick",zh:"粉丝推荐",ja:"ファン推薦"},
+  noCands:{ko:"아직 후보가 없어요. 아래에서 첫 향수를 추천해 주세요.",en:"No candidates yet. Suggest the first one below.",zh:"还没有候选，请在下方推荐第一款香水。",ja:"まだ候補がありません。下から最初の香水を推薦してください。"},
+  nomSummary:{ko:"이 앨범에 어울리는 향수 추천하기",en:"Suggest a perfume for this album",zh:"为这张专辑推荐香水",ja:"このアルバムに合う香水を推薦する"},
+  fBrand:{ko:"브랜드",en:"Brand",zh:"品牌",ja:"ブランド"},
+  fName:{ko:"향수 이름",en:"Perfume",zh:"香水名称",ja:"香水名"},
+  fNotes:{ko:"주요 노트 (쉼표로 구분)",en:"Key notes (comma separated)",zh:"主要香调（逗号分隔）",ja:"主なノート（カンマ区切り）"},
+  fWhy:{ko:"이 향을 맡으면 떠오르는 장면",en:"The scene it brings back",zh:"闻到时想起的画面",ja:"この香りで思い出す場面"},
+  fSubmit:{ko:"추천 올리기",en:"Suggest",zh:"提交推荐",ja:"推薦する"},
+  nomDup:{ko:"이미 후보에 있는 향수예요. 그 향수에 투표해 주세요.",en:"Already a candidate. Vote for it instead.",zh:"该香水已在候选中，请直接投票。",ja:"すでに候補にあります。そちらに投票してください。"},
+  nomOk:{ko:"추천했어요. 후보 목록에 추가됐어요.",en:"Added to the candidates.",zh:"已加入候选。",ja:"候補に追加しました。"},
+  scentDisclaimer:{ko:"구매 목적이 아니라 \"이 향을 맡으면 이 앨범이 떠오르는\" 향을 함께 정하는 공간이에요. 노트는 각 브랜드가 공개한 정보 기준이고, 추천 설명은 아카이브의 해석이에요.",en:"Not a shopping list: this is where fans pick the scent that brings each album back. Notes follow each brand's published list; the descriptions are the archive's own reading.",zh:"这里不是购物清单，而是大家一起选出\"一闻到就想起这张专辑\"的香气。香调以品牌公开信息为准，推荐说明是本站的理解。",ja:"購入のためではなく「この香りを嗅ぐとこのアルバムを思い出す」香りをみんなで決める場所です。ノートは各ブランドの公開情報、説明文はアーカイブ独自の解釈です。"},
+  findStage:{ko:"무대 · 직캠 찾기",en:"Find stages & fancams",zh:"查找舞台与直拍",ja:"ステージ・推しカメラを探す"},
+  findHint:{ko:"곡을 고르고 이름을 누르면 무대, 직캠, 풀캠, 얼빡캠, 페이스캠을 한 번에 YouTube에서 검색해요.",en:"Pick a song, then tap a name to search YouTube for stages, fancams, full cams and face cams at once.",zh:"选好歌曲后点击名字，即可在 YouTube 一次搜索舞台、直拍、全景与脸部直拍。",ja:"曲を選んで名前をタップすると、ステージ・推しカメラ・フルカム・フェイスカムをまとめてYouTubeで検索します。"},
+  everyone:{ko:"전체",en:"Everyone",zh:"全员",ja:"全員"},
+  spChallenge:{ko:"챌린지",en:"Challenge",zh:"挑战",ja:"チャレンジ"},
+  spSpecial:{ko:"스페셜 무대",en:"Special stage",zh:"特别舞台",ja:"スペシャルステージ"},
+  spMedley:{ko:"하이라이트 메들리",en:"Highlight medley",zh:"精彩串烧",ja:"ハイライトメドレー"},
+  coverUp:{ko:"커버 이미지 올리기",en:"Upload cover",zh:"上传封面",ja:"カバー画像をアップロード"},
+  coverRe:{ko:"커버 바꾸기",en:"Replace cover",zh:"更换封面",ja:"カバーを変更"},
+  coverDel:{ko:"커버 지우기",en:"Remove cover",zh:"删除封面",ja:"カバーを削除"},
+  coverBusy:{ko:"올리는 중…",en:"Uploading…",zh:"上传中…",ja:"アップロード中…"},
+  coverFail:{ko:"커버를 올리지 못했어요. 이미지 파일인지 확인해 주세요.",en:"Couldn't upload. Check that it's an image.",zh:"上传失败，请确认是图片文件。",ja:"アップロードできませんでした。画像ファイルか確認してください。"},
+  coverHint:{ko:"편집 권한이 있는 사람에게만 보이는 메뉴예요. 올린 커버는 모든 방문자에게 보여요.",en:"Only editors see this. Uploaded covers show for every visitor.",zh:"仅编辑者可见。上传的封面所有访客都能看到。",ja:"編集者だけに表示されます。アップロードしたカバーは全員に表示されます。"},
+  footer:{ko:"비공식 팬 아카이브입니다. 발매·일정 정보는 언론 보도를 바탕으로 정리했고, 영상과 음원의 권리는 각 권리자에게 있습니다. 링크는 YouTube 검색으로 연결됩니다.",en:"Unofficial fan archive. Release and schedule details come from press reports; all videos and audio belong to their rights holders. Links open YouTube searches.",zh:"非官方粉丝资料库。发行与日程信息整理自媒体报道，视频与音源版权归各权利人所有。链接将打开 YouTube 搜索。",ja:"非公式のファンアーカイブです。リリース・日程は報道をもとに整理しており、映像と音源の権利は各権利者に帰属します。リンクはYouTube検索に移動します。"}
+};
+let LANG = "ko";
+try { const s = localStorage.getItem("rescene-lang"); if(LANGS.some(l => l.id === s)) LANG = s; } catch(e){}
+const t = k => (T[k] && (T[k][LANG] ?? T[k].ko)) || k;
+const L = o => o == null ? "" : (typeof o === "string" ? o : (o[LANG] ?? o.en ?? o.ko));
+const LOC = () => LANGS.find(l => l.id === LANG).locale;
+
+/* ================= data ================= */
+const MEMBERS = [
+  {id:"woni",  name:{ko:"원이",en:"WONI",zh:"WONI",ja:"ウォニ"}, en:"WONI", fc:"WONI", home:{ko:"거제",en:"Geoje",zh:"巨济",ja:"巨済"}, amb:true, color:"#FF8A5B"},
+  {id:"liv",   name:{ko:"리브",en:"LIV",zh:"LIV",ja:"リブ"}, en:"LIV", fc:"LIV", home:{ko:"수원",en:"Suwon",zh:"水原",ja:"水原"}, amb:true, color:"#C6C2FF"},
+  {id:"minami",name:{ko:"미나미",en:"MINAMI",zh:"MINAMI",ja:"ミナミ"}, en:"MINAMI", fc:"MINAMI", home:{ko:"일본 지바현 사쿠라시",en:"Sakura, Chiba, Japan",zh:"日本千叶县佐仓市",ja:"千葉県佐倉市"}, amb:false, color:"#F2C4DC"},
+  {id:"may",   name:{ko:"메이",en:"MAY",zh:"MAY",ja:"メイ"}, en:"MAY", fc:"MAY", home:{ko:"고양",en:"Goyang",zh:"高阳",ja:"高陽"}, amb:true, color:"#F7E36B"},
+  {id:"zena",  name:{ko:"제나",en:"ZENA",zh:"ZENA",ja:"ジェナ"}, en:"ZENA", fc:"ZENA", home:{ko:"경주",en:"Gyeongju",zh:"庆州",ja:"慶州"}, amb:true, color:"#9FC9AE"}
+];
+
+// track: [display name, isTitle, searchKeyword(Korean), note]
+const RELEASES = [
+  {id:"pulse", title:"PULSE", date:"2026-11-03", color:"#C6C2FF", icon:"heart",
+   kind:{ko:"미니 4집",en:"4th EP",zh:"第四张迷你专辑",ja:"4thミニアルバム"}, f:"mini",
+   scent:{ko:"머스크",en:"Musk",zh:"麝香",ja:"ムスク"},
+   desc:{ko:"너에게 건넨 노래가 다시 나를 일으켜 세우는 목소리로 돌아오는 순간. 무대와 객석이 나누는 체온을 머스크에 담았어요.",
+         en:"The moment a song you gave away comes back as the voice that lifts you up. The warmth shared between stage and crowd, told as musk.",
+         zh:"献给你的歌，化作让我重新站起的声音归来。用麝香诠释舞台与观众之间的体温。",
+         ja:"君に贈った歌が、私をもう一度立ち上がらせる声になって戻る瞬間。ステージと客席が分け合う体温をムスクで表現。"},
+   specials:[["spMedley","RESCENE PULSE Highlight Medley"]],
+   tracks:[["With",true,"With",null,[["spChallenge","리센느 위드 챌린지"]]],["Finest Thing",false,"Finest Thing"],["백화요란 (Inside Out)",false,"백화요란"],["MEME",false,"MEME"],["Dragon",false,"드래곤"]]},
+  {id:"prettygirl", title:"Pretty Girl", date:"2026-07-08", color:"#F7E36B", icon:"star",
+   kind:{ko:"리메이크 싱글",en:"Remake single",zh:"翻唱单曲",ja:"リメイクシングル"}, f:"single",
+   scent:null,
+   desc:{ko:"카라 원곡을 상큼하게 다시 부른 리메이크. 7월 14일 더쇼에서 데뷔 첫 음악방송 1위.",
+         en:"A bright remake of KARA's hit. Their first music show win came on The Show, July 14.",
+         zh:"清新重新演绎 KARA 原曲。7月14日在 The Show 拿下出道后首个音乐节目一位。",
+         ja:"KARAの原曲を爽やかにリメイク。7月14日のTHE SHOWでデビュー初の音楽番組1位。"},
+   tracks:[["Pretty Girl",true,"프리티걸",null,[["spChallenge","리센느 프리티걸 챌린지"]]]]},
+  {id:"runaway", title:"Runaway", date:"2026-04-08", color:"#C9A48E", icon:"smoke",
+   kind:{ko:"디지털 싱글",en:"Digital single",zh:"数字单曲",ja:"デジタルシングル"}, f:"single",
+   scent:{ko:"인센스",en:"Incense",zh:"焚香",ja:"インセンス"},
+   desc:{ko:"틀에 박힌 일상을 박차고 나와, 스스로 고른 길에서 진짜 '나'와 '우리'를 완성해 가는 이야기.",
+         en:"Breaking out of a fixed routine and finding the real 'me' and 'us' on a path of their own choosing.",
+         zh:"挣脱千篇一律的日常，在自己选择的路上完成真正的\"我\"与\"我们\"。",
+         ja:"決まりきった日常を飛び出し、自分で選んだ道で本当の「私」と「私たち」を見つけていく物語。"},
+   tracks:[["Runaway",true,"Runaway"]]},
+  {id:"lipbomb", title:"lip bomb", date:"2025-11-25", color:"#FF8A7A", icon:"berry",
+   kind:{ko:"미니 3집",en:"3rd EP",zh:"第三张迷你专辑",ja:"3rdミニアルバム"}, f:"mini",
+   scent:{ko:"베리",en:"Berry",zh:"浆果",ja:"ベリー"},
+   desc:{ko:"더 향기롭고 달콤해진 베리 향의 미니 3집. 더블 타이틀 Heart Drop과 Bloom.",
+         en:"A sweeter, berry-scented third EP with double title tracks Heart Drop and Bloom.",
+         zh:"更香更甜的浆果香第三张迷你专辑，双主打 Heart Drop 与 Bloom。",
+         ja:"より甘く香るベリーの3rdミニ。ダブルタイトルはHeart DropとBloom。"},
+   tracks:[["Heart Drop",true,"하트드롭"],["Bloom",true,"Bloom"],["Love Echo",false,"Love Echo"],["Hello XO",false,"Hello XO"],["MVP",false,"MVP"]]},
+  {id:"dearest", title:"Dearest", date:"2025-07-02", color:"#9FC9AE", icon:"drop",
+   kind:{ko:"싱글 2집",en:"2nd single album",zh:"第二张单曲专辑",ja:"2ndシングル"}, f:"single",
+   scent:{ko:"비 온 뒤 풀향",en:"Grass after rain",zh:"雨后青草",ja:"雨上がりの草の香り"},
+   desc:{ko:"스쳐 지나간 듯하다가 문득 떠오르는 잔향처럼, 오래 기억되고 싶은 마음을 담은 싱글.",
+         en:"Like a lingering scent that suddenly comes back: a single about wanting to be remembered.",
+         zh:"像擦肩而过后忽然想起的余香，寄托想被长久记住的心意。",
+         ja:"すれ違ったあと、ふと思い出す残り香のように。長く覚えていてほしい気持ちを込めたシングル。"},
+   tracks:[["Deja Vu",true,"데자부"],["Mood",false,"Mood"]]},
+  {id:"glowup", title:"Glow Up", date:"2025-02-05", color:"#BFDDF2", icon:"bubbles",
+   kind:{ko:"미니 2집",en:"2nd EP",zh:"第二张迷你专辑",ja:"2ndミニアルバム"}, f:"mini",
+   scent:{ko:"비누",en:"Soap",zh:"皂香",ja:"石けん"},
+   desc:{ko:"스타일, 자신감, 실력까지 자란 성장기를 맑고 깨끗한 비누 향으로.",
+         en:"A growth story in style, confidence and skill, told with clean soap.",
+         zh:"用干净清透的皂香讲述风格、自信与实力的成长。",
+         ja:"スタイルも自信も実力も伸びた成長記を、澄んだ石けんの香りで。"},
+   tracks:[["CRASH",false,"CRASH"],["Glow Up",true,"Glow Up"],["Going on",false,"Going on"],["In my lotion",false,"In my lotion"],["Cotton Candy",false,"Cotton Candy"]]},
+  {id:"uhuh-jp", title:"UhUh (Japanese Ver.)", date:"2024-12-04", color:"#E6DDF5", icon:"asterisk",
+   kind:{ko:"일본 싱글",en:"Japanese single",zh:"日本单曲",ja:"日本シングル"}, f:"japan", scent:null,
+   desc:{ko:"데뷔곡 UhUh를 일본어로 다시 녹음한 싱글.",en:"Debut song UhUh re-recorded in Japanese.",zh:"出道曲 UhUh 的日语版。",ja:"デビュー曲UhUhの日本語版。"},
+   tracks:[["UhUh (Japanese Ver.)",true,"UhUh Japanese"]]},
+  {id:"scenedrome", title:"SCENEDROME", date:"2024-08-27", color:"#9DBFE8", icon:"wave",
+   kind:{ko:"미니 1집",en:"1st EP",zh:"第一张迷你专辑",ja:"1stミニアルバム"}, f:"mini",
+   scent:{ko:"앰버그리스",en:"Ambergris",zh:"龙涎香",ja:"アンバーグリス"},
+   desc:{ko:"잃어버린 용연향을 찾아 바다에서 도시로 온 인어공주. LOVE ATTACK은 2026년 역주행으로 멜론 TOP100 1위.",
+         en:"A mermaid comes from the sea to the city to find lost ambergris. LOVE ATTACK climbed back to No.1 on Melon TOP100 in 2026.",
+         zh:"为寻找遗失的龙涎香而从大海来到城市的人鱼公主。LOVE ATTACK 于2026年逆袭登顶 Melon TOP100。",
+         ja:"失くした龍涎香を探して海から都会へ来た人魚姫。LOVE ATTACKは2026年に逆走でMelon TOP100の1位に。"},
+   tracks:[["Lucky you",false,"Lucky you"],["LOVE ATTACK",true,"러브어택",null,[["spSpecial","리센느 러브어택 엠카운트다운 스페셜 스테이지"]]],["New World",false,"New World"],["Pinball",true,"핀볼"]]},
+  {id:"yoyo-jp", title:"YoYo (Japanese Ver.)", date:"2024-08-16", color:"#F3D9E6", icon:"asterisk",
+   kind:{ko:"일본 싱글",en:"Japanese single",zh:"日本单曲",ja:"日本シングル"}, f:"japan", scent:null,
+   desc:{ko:"첫 일본 싱글.",en:"First Japanese single.",zh:"首张日本单曲。",ja:"初の日本シングル。"},
+   tracks:[["YoYo (Japanese Ver.)",true,"YoYo Japanese"]]},
+  {id:"rescene", title:"Re:Scene", date:"2024-03-26", color:"#F2C4DC", icon:"flower",
+   kind:{ko:"싱글 1집 · 데뷔",en:"Debut single album",zh:"出道单曲专辑",ja:"デビューシングル"}, f:"single",
+   scent:{ko:"플로럴",en:"Floral",zh:"花香",ja:"フローラル"},
+   desc:{ko:"꿈과 현실의 경계에서 꽃내음에 이끌리는 데뷔. 선공개곡 YoYo는 2월 29일에 먼저 나왔어요.",
+         en:"A debut drawn by the scent of flowers between dream and reality. Pre-release YoYo came out Feb 29.",
+         zh:"在梦与现实的边界被花香吸引的出道。先行曲 YoYo 于2月29日公开。",
+         ja:"夢と現実の境目で花の香りに誘われるデビュー。先行曲YoYoは2月29日に公開。"},
+   tracks:[["YoYo",false,"YoYo","2024.02.29"],["UhUh",true,"UhUh"]]}
+];
+const relById = id => RELEASES.find(r => r.id === id);
+
+const ICONS = {
+  heart:'<path d="M32 54C14 41 6 32 6 21a13 13 0 0 1 26-3 13 13 0 0 1 26 3c0 11-8 20-26 33z"/>',
+  star:'<path d="M32 4l7 21h22L43 38l7 22-18-13-18 13 7-22L3 25h22z"/>',
+  smoke:'<path d="M20 58c-8-8 10-12 2-20s10-12 2-20 8-12 6-14" fill="none" stroke="#111" stroke-width="7" stroke-linecap="round"/><path d="M40 58c-8-8 10-12 2-20s10-12 2-20" fill="none" stroke="#111" stroke-width="7" stroke-linecap="round"/>',
+  berry:'<circle cx="22" cy="40" r="15"/><circle cx="44" cy="38" r="13"/><path d="M33 22c2-10 10-16 20-16-2 10-10 16-20 16z"/>',
+  drop:'<path d="M32 4C22 22 12 32 12 42a20 20 0 0 0 40 0C52 32 42 22 32 4z"/>',
+  bubbles:'<circle cx="22" cy="38" r="16"/><circle cx="46" cy="22" r="10"/><circle cx="48" cy="48" r="7"/>',
+  wave:'<path d="M2 30c10-12 20-12 30 0s20 12 30 0" fill="none" stroke="#111" stroke-width="8" stroke-linecap="round"/><path d="M2 48c10-12 20-12 30 0s20 12 30 0" fill="none" stroke="#111" stroke-width="8" stroke-linecap="round"/>',
+  flower:'<circle cx="32" cy="14" r="11"/><circle cx="50" cy="28" r="11"/><circle cx="43" cy="49" r="11"/><circle cx="21" cy="49" r="11"/><circle cx="14" cy="28" r="11"/>',
+  asterisk:'<path d="M28 4h8v20l17-10 4 7-17 11 17 11-4 7-17-10v20h-8V40L11 50l-4-7 17-11L7 21l4-7 17 10z"/>'
+};
+const icon = k => `<svg viewBox="0 0 64 64" fill="#111" aria-hidden="true">${ICONS[k] || ICONS.asterisk}</svg>`;
+
+// cat: release | broadcast | event | awards ; uni = campus festival ; win = award won ; kw = keyword fans put in titles
+const U = (ko, en) => ({ko:`${ko} 축제`, en:`${en} festival`, zh:`${en} 校园庆典`, ja:`${en} 学園祭`});
+const S = (ko, en, zh, ja) => ({ko, en, zh: zh || en, ja: ja || en});
+const EVENTS = [
+  {d:"2026-11-29", c:"event", kw:"팬사인회", t:S("[PULSE] 팬사인회 (WHOSFAN)","[PULSE] fansign (WHOSFAN)","[PULSE] 签售会（WHOSFAN）","[PULSE] サイン会（WHOSFAN）")},
+  {d:"2026-11-27", c:"event", kw:"팬사인회", t:S("[PULSE] 팬사인회 (WITHMUU)","[PULSE] fansign (WITHMUU)","[PULSE] 签售会（WITHMUU）","[PULSE] サイン会（WITHMUU）")},
+  {d:"2026-11-22", c:"event", kw:"팬사인회", t:S("[PULSE] 팬사인회 (MAKESTAR)","[PULSE] fansign (MAKESTAR)","[PULSE] 签售会（MAKESTAR）","[PULSE] サイン会（MAKESTAR）")},
+  {d:"2026-11-20", c:"awards", kw:"MAMA", t:S("2026 MAMA AWARDS","2026 MAMA AWARDS"), p:S("오사카","Osaka","大阪","大阪")},
+  {d:"2026-11-14", c:"awards", kw:"MMA 멜론뮤직어워드", t:S("2026 멜론 뮤직 어워드 (MMA)","2026 Melon Music Awards (MMA)","2026 Melon 音乐大奖 (MMA)","2026 Melon Music Awards (MMA)")},
+  {d:"2026-11-08", c:"event", kw:"팬사인회", t:S("[PULSE] 팬사인회 (MAKESTAR)","[PULSE] fansign (MAKESTAR)","[PULSE] 签售会（MAKESTAR）","[PULSE] サイン会（MAKESTAR）")},
+  {d:"2026-11-07", c:"awards", kw:"KGMA", t:S("2026 KGMA (원이 첫날 MC)","2026 KGMA (Woni hosts day 1)","2026 KGMA（元伊担任首日MC）","2026 KGMA（ウォニが初日MC）"), p:S("고척스카이돔","Gocheok Sky Dome","高尺巨蛋","高尺スカイドーム")},
+  {d:"2026-11-06", c:"broadcast", kw:"뮤직뱅크 With", r:"pulse", t:S("뮤직뱅크 With 컴백 무대","Music Bank: With comeback stage","音乐银行 With 回归舞台","ミュージックバンク With カムバック")},
+  {d:"2026-11-03", c:"release", kw:"PULSE 쇼케이스", r:"pulse", t:S("미니 4집 PULSE 발매 · 쇼케이스","4th EP PULSE release & showcase","第四张迷你专辑 PULSE 发行·Showcase","4thミニ PULSE リリース・ショーケース"), p:S("블루스퀘어","Blue Square")},
+  {d:"2026-10-30", c:"event", kw:"경주 APEC", t:S("2026 경주 APEC 메모리얼 페스타 축하공연 (10.30~31)","2026 Gyeongju APEC Memorial Festa (Oct 30–31)","2026 庆州 APEC 纪念庆典（10.30~31）","2026 慶州APECメモリアルフェスタ（10.30~31）"), p:S("경주엑스포대공원","Gyeongju Expo Park","庆州世博公园","慶州エキスポ公園")},
+  {d:"2026-10-24", c:"event", kw:"오션하모니 거제", t:S("2026 오션 하모니","2026 Ocean Harmony"), p:S("거제 한화오션 오션프라자","Hanwha Ocean Plaza, Geoje")},
+  {d:"2026-10-24", c:"event", kw:"여기어때 콘서트팩 거제", t:S("여기어때 콘서트팩 거제","Yeogi Eottae Concert Pack Geoje"), p:S("한화리조트 거제 벨버디어","Hanwha Resort Geoje Belvedere")},
+  {d:"2026-10-23", c:"event", uni:true, kw:"마산대", t:U("마산대학교","Masan University"), p:S("마산대학교 청강기념관 야외무대","Masan University")},
+  {d:"2026-10-23", c:"event", uni:true, kw:"동아대", t:S("동아대학교 개교 80주년 기념식","Dong-A University 80th anniversary","东亚大学建校80周年纪念","東亜大学 開校80周年記念式"), p:S("동아대 승학캠퍼스","Dong-A Univ. Seunghak Campus")},
+  {d:"2026-10-11", c:"broadcast", kw:"8뉴스", t:S("SBS 8뉴스 출연","SBS 8 News appearance","出演 SBS 8点新闻","SBS 8ニュース出演")},
+  {d:"2026-10-11", c:"event", kw:"GHOST 한류 OST", t:S("2026 GHOST 경기 한류 OST 뮤직페스티벌","2026 GHOST Gyeonggi Hallyu OST Music Festival")},
+  {d:"2026-10-10", c:"event", kw:"동구동락", t:S("2026 대전 동구동락축제","2026 Daejeon Donggu Dongrak Festival","2026 大田东区同乐庆典","2026 大田トング同楽祭り"), p:S("대전 동구","Dong-gu, Daejeon")},
+  {d:"2026-10-09", c:"broadcast", kw:"해피투게더", t:S("KBS2 해피투게더","KBS2 Happy Together","KBS2 Happy Together","KBS2 ハッピートゥゲザー")},
+  {d:"2026-10-09", c:"event", kw:"능허대", t:S("제14회 연수 능허대 문화축제","14th Yeonsu Neungheodae Culture Festival")},
+  {d:"2026-10-04", c:"event", kw:"의령 리치리치", t:S("제5회 의령 리치리치 페스티벌","5th Uiryeong Rich Rich Festival","第5届宜宁 Rich Rich 庆典","第5回 宜寧リッチリッチフェスティバル"), p:S("의령군민공원","Uiryeong County Park")},
+  {d:"2026-10-03", c:"event", kw:"백제문화제", t:S("제72회 백제문화제","72nd Baekje Cultural Festival","第72届百济文化节","第72回 百済文化祭")},
+  {d:"2026-10-03", c:"event", kw:"입크 페스티벌", t:S("2026 입크 페스티벌","2026 IPK Festival")},
+  {d:"2026-10-01", c:"event", uni:true, kw:"대구보건대", t:U("대구보건대학교","Daegu Health College")},
+  {d:"2026-10-01", c:"event", uni:true, kw:"계명대", t:U("계명대학교","Keimyung University")},
+  {d:"2026-09-30", c:"event", uni:true, kw:"한경대", t:U("한경국립대학교 백호대동제","Hankyong National University"), p:S("한경국립대학교 대운동장","Hankyong National Univ.")},
+  {d:"2026-09-22", c:"event", uni:true, kw:"명지대", t:U("명지대학교 자연캠퍼스","Myongji University"), p:S("명지대 자연캠퍼스","Myongji Univ. Natural Science Campus")},
+  {d:"2026-09-19", c:"awards", kw:"TMA 더팩트", win:S("올해의 아티스트 · 투데이스 초이스 (2관왕)","Artist of the Year · Today's Choice","年度艺人 · Today's Choice（双冠）","今年のアーティスト・Today's Choice（2冠）"), t:S("2026 더팩트 뮤직 어워즈","2026 The Fact Music Awards","2026 The Fact 音乐大奖","2026 THE FACT MUSIC AWARDS"), p:S("부산아시아드주경기장","Busan Asiad Main Stadium")},
+  {d:"2026-09-09", c:"event", kw:"거제 명예시민", t:S("거제시 명예시민 선정 (연예인 최초)","Named honorary citizens of Geoje (first entertainers)","入选巨济市荣誉市民（艺人首例）","巨済市の名誉市民に選定（芸能人初）")},
+  {d:"2026-09-03", c:"awards", kw:"한국방송대상", t:S("제53회 한국방송대상 축하공연","53rd Korea Broadcasting Awards (performance)","第53届韩国广播大奖 祝贺演出","第53回 韓国放送大賞 祝賀公演"), p:S("MBC 공개홀","MBC Public Hall")},
+  {d:"2026-08-27", c:"awards", kw:"KWDA", t:S("2026 K 월드 드림 어워즈","2026 K World Dream Awards"), p:S("킨텍스","KINTEX")},
+  {d:"2026-08-16", c:"event", kw:"KCON LA", t:S("KCON LA 2026 엠카운트다운 스테이지","KCON LA 2026 M COUNTDOWN STAGE"), p:S("LA 크립토닷컴 아레나","Crypto.com Arena, LA")},
+  {d:"2026-08-09", c:"event", kw:"쿠팡플레이 하프타임", t:S("쿠팡플레이 시리즈 하프타임 쇼 (맨시티 vs 아틀레티코)","Coupang Play Series halftime show (Man City vs Atlético)","Coupang Play 系列赛中场秀（曼城 vs 马竞）","クーパンプレイシリーズ ハーフタイムショー"), p:S("서울월드컵경기장","Seoul World Cup Stadium")},
+  {d:"2026-07-25", c:"event", kw:"원유니버스", t:S("원 유니버스 페스티벌 2026","ONE UNIVERSE FESTIVAL 2026"), p:S("인천 파라다이스시티","Paradise City, Incheon")},
+  {d:"2026-07-14", c:"broadcast", kw:"더쇼 1위", r:"prettygirl", win:S("Pretty Girl 1위 · 데뷔 첫 음악방송 1위","No.1 with Pretty Girl, first music show win","Pretty Girl 一位 · 出道首个一位","Pretty Girl で1位・デビュー初1位"), t:S("더쇼","The Show","The Show","THE SHOW"), p:S("SBS 프리즘타워","SBS Prism Tower")},
+  {d:"2026-07-12", c:"broadcast", kw:"인기가요", r:"prettygirl", t:S("인기가요 (원이·미나미 스페셜 MC)","Inkigayo (Woni & Minami as special MCs)","人气歌谣（元伊·MINAMI 特别MC）","人気歌謡（ウォニ・ミナミがスペシャルMC）")},
+  {d:"2026-07-11", c:"broadcast", kw:"음악중심", r:"prettygirl", t:S("쇼! 음악중심","Show! Music Core","Show! 音乐中心","ショー！K-POPの中心")},
+  {d:"2026-07-10", c:"broadcast", kw:"뮤직뱅크", r:"prettygirl", t:S("뮤직뱅크","Music Bank","音乐银行","ミュージックバンク")},
+  {d:"2026-07-09", c:"broadcast", kw:"엠카 프리티걸", r:"prettygirl", t:S("엠카운트다운 Pretty Girl 첫 무대 (카라 니콜 깜짝 등장)","M Countdown Pretty Girl debut stage (surprise guest Nicole of KARA)","M Countdown Pretty Girl 首秀（KARA Nicole 惊喜登场）","Mカウントダウン Pretty Girl 初披露（KARAニコル登場）")},
+  {d:"2026-07-08", c:"release", kw:"프리티걸", r:"prettygirl", t:S("리메이크 싱글 Pretty Girl 발매","Remake single Pretty Girl released","翻唱单曲 Pretty Girl 发行","リメイクシングル Pretty Girl リリース")},
+  {d:"2026-07-02", c:"event", kw:"고양 홍보대사", t:S("고양특례시 홍보대사 위촉 (메이 고향)","Named Goyang ambassadors (May's hometown)","受聘高阳市宣传大使（MAY 的家乡）","高陽市の広報大使に（メイの地元）")},
+  {d:"2026-06-24", c:"event", kw:"수원 홍보대사", t:S("수원시 홍보대사 위촉 (리브 고향)","Named Suwon ambassadors (Liv's hometown)","受聘水原市宣传大使（LIV 的家乡）","水原市の広報大使に（リブの地元）")},
+  {d:"2026-06-18", c:"broadcast", kw:"엠카 러브어택", r:"scenedrome", t:S("엠카운트다운 LOVE ATTACK 스페셜 스테이지 (역주행)","M Countdown LOVE ATTACK special stage","M Countdown LOVE ATTACK 特别舞台（逆袭）","Mカウントダウン LOVE ATTACK スペシャルステージ")},
+  {d:"2026-06-04", c:"event", kw:"거제", t:S("거제시청 · 관광지 방문","Visit to Geoje City Hall and sights","走访巨济市厅与景点","巨済市庁・観光地を訪問")},
+  {d:"2026-05-22", c:"event", kw:"거제 홍보대사", t:S("거제시 홍보대사 위촉 ('거제 야호' 인연)","Named Geoje ambassadors (thanks to 'Geoje Yaho')","受聘巨济市宣传大使","巨済市の広報大使に（「巨済ヤッホー」の縁）")},
+  {d:"2026-05-08", c:"event", kw:"KCON JAPAN", t:S("KCON JAPAN 2026 (5.8~10 중)","KCON JAPAN 2026 (during May 8–10)"), p:S("마쿠하리 멧세","Makuhari Messe","幕张展览馆","幕張メッセ")},
+  {d:"2026-04-30", c:"event", uni:true, kw:"경일대", t:U("경일대학교","Kyungil University")},
+  {d:"2026-04-09", c:"broadcast", kw:"엠카 Runaway", r:"runaway", t:S("엠카운트다운 Runaway 첫 무대","M Countdown Runaway debut stage","M Countdown Runaway 首秀","Mカウントダウン Runaway 初披露")},
+  {d:"2026-04-08", c:"release", kw:"Runaway", r:"runaway", t:S("디지털 싱글 Runaway 발매","Digital single Runaway released","数字单曲 Runaway 发行","デジタルシングル Runaway リリース")},
+  {d:"2025-11-25", c:"release", kw:"lip bomb 쇼케이스", r:"lipbomb", t:S("미니 3집 lip bomb 발매 · 쇼케이스","3rd EP lip bomb release & showcase","第三张迷你专辑 lip bomb 发行·Showcase","3rdミニ lip bomb リリース・ショーケース"), p:S("명화라이브홀","Myunghwa Live Hall")},
+  {d:"2025-11-06", c:"release", kw:"하트드롭", r:"lipbomb", t:S("Heart Drop 선공개","Heart Drop pre-release","Heart Drop 先行公开","Heart Drop 先行公開")},
+  {d:"2025-08-09", c:"event", kw:"팬콘 Project 326", t:S("첫 팬콘서트 <Project 326>","1st fan concert <Project 326>","首场粉丝演唱会 <Project 326>","初ファンコン <Project 326>"), p:S("성신여대 운정캠퍼스 대강당","Sungshin Women's Univ. Woonjeong Campus")},
+  {d:"2025-07-02", c:"release", kw:"데자부", r:"dearest", t:S("싱글 2집 Dearest 발매","2nd single album Dearest released","第二张单曲专辑 Dearest 发行","2ndシングル Dearest リリース")},
+  {d:"2025-05-29", c:"event", uni:true, kw:"대구가톨릭대", t:U("대구가톨릭대학교","Daegu Catholic University")},
+  {d:"2025-05-28", c:"event", uni:true, kw:"동국대 경주", t:U("동국대학교 경주캠퍼스","Dongguk University Gyeongju")},
+  {d:"2025-05-28", c:"event", uni:true, kw:"부산대", t:U("부산대학교","Pusan National University")},
+  {d:"2025-05-27", c:"event", uni:true, kw:"경국대", t:U("국립경국대학교","Gyeongkuk National University")},
+  {d:"2025-05-26", c:"event", uni:true, kw:"영남대", t:U("영남대학교","Yeungnam University")},
+  {d:"2025-05-14", c:"event", uni:true, kw:"가천대", t:U("가천대학교 글로벌캠퍼스","Gachon University")},
+  {d:"2025-05-13", c:"event", uni:true, kw:"남서울대", t:U("남서울대학교 대동제","Namseoul University")},
+  {d:"2025-05-13", c:"event", uni:true, kw:"대학축제", t:S("5월 대학 축제 18곳 (경민대 · 고려대 · 국민대 · 군산대 · 동양미래대 · 서강대 · 선문대 · 성결대 · 우송대 · 한라대 · 한밭대 등)","18 campus festivals in May (Korea Univ., Kookmin, Sogang, Hanbat and more)","5月18所大学庆典（高丽大学、国民大学、西江大学等）","5月の大学祭18校（高麗大・国民大・西江大など）")},
+  {d:"2025-02-17", c:"release", kw:"Glow Up English", r:"glowup", t:S("Glow Up (English Version) 발매","Glow Up (English Version) released","Glow Up（英文版）发行","Glow Up（English Version）リリース")},
+  {d:"2025-02-05", c:"release", kw:"Glow Up 쇼케이스", r:"glowup", t:S("미니 2집 Glow Up 발매 · 쇼케이스","2nd EP Glow Up release & showcase","第二张迷你专辑 Glow Up 发行·Showcase","2ndミニ Glow Up リリース・ショーケース"), p:S("일지아트홀","ILCHI Art Hall")},
+  {d:"2024-12-07", c:"event", kw:"도쿄타워", t:S("일본 데뷔 공연","Japan debut show","日本出道演出","日本デビュー公演"), p:S("도쿄타워","Tokyo Tower","东京塔","東京タワー")},
+  {d:"2024-12-04", c:"release", kw:"UhUh Japanese", r:"uhuh-jp", t:S("일본 싱글 UhUh (Japanese Ver.)","Japanese single UhUh (Japanese Ver.)","日本单曲 UhUh（日语版）","日本シングル UhUh（Japanese Ver.）")},
+  {d:"2024-08-27", c:"release", kw:"SCENEDROME", r:"scenedrome", t:S("미니 1집 SCENEDROME 발매","1st EP SCENEDROME released","第一张迷你专辑 SCENEDROME 发行","1stミニ SCENEDROME リリース")},
+  {d:"2024-08-16", c:"release", kw:"YoYo Japanese", r:"yoyo-jp", t:S("일본 첫 싱글 YoYo (Japanese Ver.)","First Japanese single YoYo (Japanese Ver.)","首张日本单曲 YoYo（日语版）","日本1stシングル YoYo（Japanese Ver.）")},
+  {d:"2024-05-09", c:"event", kw:"SCENT Room", r:"rescene", t:S("3D 가상공간 SCENT Room 오픈","3D virtual space SCENT Room opens","3D 虚拟空间 SCENT Room 开放","3D仮想空間 SCENT Room オープン")},
+  {d:"2024-03-26", c:"release", kw:"데뷔 쇼케이스", r:"rescene", t:S("데뷔 싱글 Re:Scene 발매 · 쇼케이스","Debut single Re:Scene release & showcase","出道单曲 Re:Scene 发行·Showcase","デビューシングル Re:Scene リリース・ショーケース"), p:S("예스24 라이브홀","YES24 Live Hall")},
+  {d:"2024-02-29", c:"release", kw:"YoYo", r:"rescene", t:S("선공개곡 YoYo 공개","Pre-release single YoYo","先行曲 YoYo 公开","先行曲 YoYo 公開")}
+];
+const CAT_COLOR = {release:"#C6C2FF", broadcast:"#BFDDF2", event:"#F7E36B", awards:"#FF8A7A"};
+const CAT_KEY = {release:"catRelease", broadcast:"catBroadcast", event:"catEvent", awards:"catAwards"};
+
+/* perfumes: notes ko / en, why in four languages */
+const P = (id, brand, name, nko, nen, why) => ({id, brand, name, notes:{ko:nko, en:nen}, why});
+const CURATED = {
+  pulse: [
+    P("c-lsm","Maison Margiela Replica","Lazy Sunday Morning",["은방울꽃","배","아이리스","로즈","화이트 머스크","앰브레트"],["Lily of the valley","Pear","Iris","Rose","White musk","Ambrette"],
+      {ko:"갓 빤 리넨 같은 하얀 머스크. 흰 원피스에 푸른빛이 번지는 콘셉트 포토와 가장 닮은 향.",en:"White musk like fresh linen, the closest match to the white dresses in blue light.",zh:"像刚洗好的亚麻般的白麝香，最像白裙沐浴蓝光的概念照。",ja:"洗いたてのリネンのようなホワイトムスク。青い光に白いワンピースのコンセプト写真に一番近い香り。"}),
+    P("c-papier","Diptyque","L'Eau Papier",["화이트 머스크","쌀 증기","미모사","블론드 우드"],["White musks","Rice steam","Mimosa","Blonde woods"],
+      {ko:"종이를 모티프로 한 화이트 머스크. '너에게 건넨 노래'를 적어 내미는 종이 한 장.",en:"A paper-inspired white musk: the sheet you'd write the song on before handing it over.",zh:"以纸为灵感的白麝香，像写下\"献给你的歌\"的那一张纸。",ja:"紙をモチーフにしたホワイトムスク。「君に贈る歌」を書いて差し出す一枚の紙。"}),
+    P("c-beige","Nonfiction","The Beige",["화이트 머스크","오리스","제라늄","통카빈"],["White musk","Orris","Geranium","Tonka bean"],
+      {ko:"햇살처럼 퍼지는 포근한 화이트 머스크. 무대와 객석 사이에 남는 체온 같은 잔향.",en:"Soft white musk that spreads like sunlight, a trail like body warmth left between stage and crowd.",zh:"如阳光般散开的温柔白麝香，像舞台与观众之间留下的体温。",ja:"日差しのように広がるやわらかなホワイトムスク。ステージと客席の間に残る体温のような余韻。"}),
+    P("c-bodyshop","The Body Shop","White Musk",["화이트 머스크"],["White musk"],
+      {ko:"화이트 머스크 하면 다들 먼저 떠올리는 기준점 같은 향. 역주행으로 모두에게 닿은 올해의 리센느처럼 익숙하고 반가운 향.",en:"The reference white musk everyone knows. Familiar and welcome, like RESCENE reaching everyone this year.",zh:"提起白麝香大家首先想到的经典。像今年逆袭走进大众的 RESCENE，熟悉又亲切。",ja:"ホワイトムスクといえば誰もが思い浮かべる定番。今年みんなに届いたRESCENEのように、懐かしくて嬉しい香り。"}),
+    P("c-allofme","Narciso Rodriguez","All of Me Intense",["로즈","머스크"],["Rose","Musk"],
+      {ko:"본래 살냄새처럼 섞이는 장미와 머스크. 맥박이 닿는 손목에서 피어나는 향.",en:"Rose and musk that melt into your own skin, blooming at the pulse point on the wrist.",zh:"玫瑰与麝香如肌肤本身的气味，在脉搏跳动的手腕绽放。",ja:"素肌の香りに溶けるローズとムスク。脈打つ手首から咲く香り。"}),
+    P("c-nuptial","Atkinsons","The Nuptial Bouquet",["화이트 머스크","프리지아"],["White musk","Freesia"],
+      {ko:"하얀 꽃과 머스크가 깃털처럼 가볍게. 여리지만 강인한 수호자 콘셉트.",en:"White flowers and musk, light as feathers: the fragile yet strong guardian concept.",zh:"白花与麝香如羽毛般轻盈，契合柔弱却坚强的守护者概念。",ja:"白い花とムスクが羽のように軽やか。か弱くも強い守護者のコンセプト。"}),
+    P("c-grey","Nonfiction","The Grey",["다크 머스크","시프리올","매그놀리아","벤조인"],["Dark musk","Cypriol","Magnolia","Benzoin"],
+      {ko:"같은 머스크의 반대편. PULSE를 짙고 강한 박동으로 기억하고 싶은 분께.",en:"The other side of musk, for remembering PULSE as a deep, strong heartbeat.",zh:"麝香的另一面，适合把 PULSE 记成深沉有力的心跳的人。",ja:"同じムスクの反対側。PULSEを深く強い鼓動として覚えたい人に。"})
+  ],
+  runaway: [
+    P("r-kyoto","Comme des Garçons","Series 3 Incense: Kyoto",["인센스","사이프러스","커피","티크우드","베티버","시더"],["Incense","Cypress","Coffee","Teak wood","Vetiver","Cedar"],
+      {ko:"사원의 향처럼 고요한 인센스. 빛이 새어 나오는 문을 여는 마지막 장면의 정적.",en:"Quiet temple incense, like the hush before they open the door spilling light.",zh:"寺院般宁静的焚香，像推开透光之门前的那一刻寂静。",ja:"寺院のように静かなインセンス。光が漏れる扉を開ける直前の静けさ。"}),
+    P("r-duelle","Diptyque","Eau Duelle",["바닐라","핑크 페퍼","시프리올","인센스"],["Vanilla","Pink pepper","Cypriol","Incense"],
+      {ko:"어둠과 빛 사이를 오가는 바닐라와 인센스. 틀을 벗어나 달려가는 긴장과 해방감.",en:"Vanilla and incense moving between dark and light: the tension and release of running away.",zh:"在暗与光之间游走的香草与焚香，逃离框架的紧张与解放。",ja:"闇と光を行き来するバニラとインセンス。枠を抜け出して走る緊張と解放感。"})
+  ],
+  lipbomb: [
+    P("l-bb","Jo Malone London","Blackberry & Bay",["블랙베리","월계수잎","시더우드"],["Blackberry","Bay leaves","Cedarwood"],
+      {ko:"새콤한 블랙베리 즙과 초록 잎. 입술에 톡 번지는 베리 향 그대로.",en:"Tart blackberry juice and green leaves, the berry burst of a lip balm.",zh:"酸甜黑莓汁与绿叶，正如唇间绽开的浆果香。",ja:"甘酸っぱいブラックベリーと緑の葉。唇に広がるベリーの香りそのもの。"}),
+    P("l-ombre","Diptyque","L'Ombre dans l'Eau",["로즈","블랙커런트 버드","페티그레인","블랙커런트 잎"],["Rose","Blackcurrant buds","Petitgrain","Blackcurrant leaves"],
+      {ko:"장미와 블랙커런트. Bloom처럼 피어나는 꽃과 베리가 함께 있는 향.",en:"Rose and blackcurrant: flowers and berries blooming together, like Bloom.",zh:"玫瑰与黑醋栗，像 Bloom 一样花与浆果一同绽放。",ja:"ローズとカシス。Bloomのように花とベリーが一緒に咲く香り。"})
+  ],
+  dearest: [
+    P("d-rain","Maison Margiela Replica","When the Rain Stops",["베르가못","베지털 어코드","핑크 페퍼","아쿠아틱","로즈","재스민","파인 니들","모스"],["Bergamot","Vegetal accord","Pink pepper","Aquatic accord","Rose","Jasmine","Pine needle","Moss"],
+      {ko:"비가 그치고 해가 드는 순간. '비 온 뒤 머무는 풀향'에 가장 가까운 향.",en:"The moment the sun comes out after rain, the closest thing to 'grass after rain'.",zh:"雨停后阳光洒落的瞬间，最接近\"雨后青草\"。",ja:"雨がやんで日が差す瞬間。「雨上がりに残る草の香り」に一番近い香り。"})
+  ],
+  glowup: [
+    P("g-bubble","Maison Margiela Replica","Bubble Bath",["비누 거품 어코드","핑크 페퍼","베르가못","라벤더","로즈","코코넛 밀크","화이트 머스크"],["Soap bubbles accord","Pink pepper","Bergamot","Lavender","Rose","Coconut milk","White musk"],
+      {ko:"따뜻한 거품 목욕 그대로의 비누 향. 맑고 깨끗한 Glow Up의 메인 향과 같은 결.",en:"Soap straight from a warm bubble bath, the same clean feel as Glow Up's main scent.",zh:"温暖泡泡浴般的皂香，与 Glow Up 清透的主香同一质感。",ja:"温かな泡風呂そのままの石けんの香り。Glow Upの澄んだメインの香りと同じ質感。"}),
+    P("g-blanche","Byredo","Blanche",["알데하이드","로즈","피오니","바이올렛","머스크","샌달우드"],["Aldehyde","Rose","Peony","Violet","Musk","Sandalwood"],
+      {ko:"새하얀 세탁물과 깨끗한 피부. 새롭게 변화한 '나'를 하얗게 표현한 향.",en:"Freshly laundered white and clean skin: a white portrait of the new 'me'.",zh:"洁白衣物与干净肌肤，用白色描绘焕然一新的\"我\"。",ja:"真っ白な洗濯物と清潔な肌。新しくなった「私」を白で描く香り。"})
+  ],
+  scenedrome: [
+    P("s-m02","Escentric Molecules","Molecule 02",["암브록산"],["Ambroxan"],
+      {ko:"용연향 유래 성분과 같은 구조의 암브록산 하나만 담은 향. 잃어버린 앰버그리스 그 자체.",en:"Pure Ambroxan, identical in structure to the ambrox found in ambergris: the lost ambergris itself.",zh:"只含与龙涎香成分结构相同的降龙涎香醚，就是那块遗失的龙涎香。",ja:"龍涎香由来の成分と同じ構造のアンブロキサンだけの香り。失くしたアンバーグリスそのもの。"}),
+    P("s-wss","Jo Malone London","Wood Sage & Sea Salt",["앰브레트 씨드","바다 소금","세이지"],["Ambrette seeds","Sea salt","Sage"],
+      {ko:"바닷바람과 소금기. 바다에서 도시로 올라온 인어공주의 첫 장면.",en:"Sea breeze and salt, the first scene of a mermaid arriving in the city.",zh:"海风与盐的气息，人鱼公主从海里来到城市的第一幕。",ja:"海風と潮の香り。海から都会へやって来た人魚姫の最初の場面。"})
+  ],
+  rescene: [
+    P("f-peony","Jo Malone London","Peony & Blush Suede",["레드 애플","피오니","재스민","로즈","스웨이드"],["Red apple","Peony","Jasmine","Rose","Suede"],
+      {ko:"활짝 핀 작약과 부드러운 스웨이드. 꽃내음에 이끌리는 데뷔의 장면.",en:"Peonies in full bloom on soft suede: a debut drawn by the scent of flowers.",zh:"盛放的芍药与柔软麂皮，被花香吸引的出道一幕。",ja:"満開のピオニーとやわらかなスエード。花の香りに誘われるデビューの場面。"}),
+    P("f-miss","Dior","Miss Dior Blooming Bouquet",["베르가못","피오니","다마스크 로즈"],["Bergamot","Peony","Damask rose"],
+      {ko:"작약과 장미의 꽃다발. 꿈과 현실의 경계에 놓인 첫 꽃다발.",en:"A bouquet of peony and rose, the first bouquet between dream and reality.",zh:"芍药与玫瑰的花束，梦与现实交界处的第一束花。",ja:"ピオニーとローズのブーケ。夢と現実の境目に置かれた最初の花束。"})
+  ]
+};
+
+/* ================= helpers ================= */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const yt  = q => "https://www.youtube.com/results?search_query=" + encodeURIComponent(q);
+const ytm = q => "https://music.youtube.com/search?q=" + encodeURIComponent(q);
+const fmt = d => d.replaceAll("-", ".");
+const yymmdd = d => d.length === 10 ? d.slice(2).replaceAll("-", "") : "";
+function weekday(d){
+  if(d.length !== 10) return "";
+  const [y,m,dd] = d.split("-").map(Number);
+  return new Intl.DateTimeFormat(LOC(), {weekday:"short", timeZone:"UTC"}).format(new Date(Date.UTC(y, m-1, dd)));
+}
+function monthLabel(ym){
+  const [y,m] = ym.split("-").map(Number);
+  return new Intl.DateTimeFormat(LOC(), {year:"numeric", month:"long", timeZone:"UTC"}).format(new Date(Date.UTC(y, m-1, 1)));
+}
+const memberName = m => L(m.name);
+let covers = {};          // albumId -> blob url
+function coverHTML(r){
+  const u = covers[r.id];
+  if(u) return `<div class="cover"><img src="${esc(u)}" alt="${esc(r.title)} cover" loading="lazy"></div>`;
+  return `<div class="cover" style="background:${r.color}55"><div class="ph">${icon(r.icon)}</div></div>`;
+}
+
+/* ================= language ================= */
+function renderLangMenu(){
+  const cur = LANGS.find(l => l.id === LANG);
+  $("#langFlag").textContent = cur.flag; $("#langCode").textContent = cur.code;
+  $("#langMenu").innerHTML = LANGS.map(l => `<button role="option" class="${l.id===LANG?"on":""}" data-l="${l.id}"><span>${l.flag}</span><span class="code">${l.code}</span><span class="nm">${l.name}</span></button>`).join("");
+  $("#langMenu").querySelectorAll("[data-l]").forEach(b => b.onclick = () => { setLang(b.dataset.l); $("#lang").classList.remove("open"); });
+}
+$("#langBtn").onclick = e => { e.stopPropagation(); $("#lang").classList.toggle("open"); };
+document.addEventListener("click", e => { if(!$("#lang").contains(e.target)) $("#lang").classList.remove("open"); });
+function setLang(id){
+  LANG = id;
+  try { localStorage.setItem("rescene-lang", id); } catch(e){}
+  document.documentElement.lang = id;
+  renderAll();
+}
+
+/* ================= tabs ================= */
+const TABS = [["albums","tabAlbums"],["schedule","tabSchedule"],["members","tabMembers"],["scent","tabScent"]];
+let currentTab = "albums";
+function renderTabs(){
+  $("#tabs").innerHTML = TABS.map(([id,k]) => `<button data-tab="${id}" class="${id===currentTab?"on":""}">${t(k)}</button>`).join("");
+  $("#tabs").querySelectorAll("button").forEach(b => b.onclick = () => { location.hash = b.dataset.tab; showTab(b.dataset.tab); });
+}
+function showTab(id){
+  if(!TABS.some(x => x[0] === id)) id = "albums";
+  currentTab = id;
+  document.querySelectorAll("section").forEach(s => s.classList.toggle("on", s.id === id));
+  renderTabs();
+}
+window.addEventListener("hashchange", () => showTab(location.hash.slice(1)));
+
+/* ================= albums ================= */
+let albumFilter = "all";
+function renderAlbums(){
+  const fs = [["all","all"],["mini","fMini"],["single","fSingle"],["japan","fJapan"]];
+  $("#albumFilters").innerHTML = fs.map(([id,k]) => `<button class="pill ${id===albumFilter?"on":""}" data-f="${id}">${t(k)}</button>`).join("");
+  $("#albumFilters").querySelectorAll("[data-f]").forEach(b => b.onclick = () => { albumFilter = b.dataset.f; renderAlbums(); });
+  const list = RELEASES.filter(r => albumFilter === "all" || r.f === albumFilter);
+  $("#tiles").innerHTML = list.map(r => `<button class="tile" data-id="${r.id}">
+      ${coverHTML(r)}
+      <div class="info">
+        <div class="t">${esc(r.title)}</div>
+        <div class="k">${esc(L(r.kind))} · ${fmt(r.date)}</div>
+        ${r.scent ? `<div class="chips"><span class="chip"><span class="dot" style="background:${r.color}"></span>${esc(L(r.scent))}</span></div>` : ""}
+      </div>
+    </button>`).join("");
+  $("#tiles").querySelectorAll(".tile").forEach(el => el.onclick = () => openAlbum(el.dataset.id));
+}
+let stageSong = 0, openId = null;
+function openAlbum(id, keep){
+  if(openId !== id || !keep) stageSong = Math.max(0, RELEASES.find(x => x.id === id).tracks.findIndex(tr => tr[1]));
+  openId = id;
+  const r = relById(id);
+  const clean = nm => nm.replace(/\s*\(.*\)/,"");
+  const rows = r.tracks.map((tr, i) => {
+    const [nm, isTitle, kw, sub, sp] = tr;
+    const extras = [
+      ...(isTitle ? [`<a class="pill sm" href="${yt("RESCENE " + clean(nm) + " Official MV")}" target="_blank" rel="noopener">${t("mv")}</a>`] : []),
+      ...((sp || []).map(([k,q]) => `<a class="pill sm" href="${yt(q)}" target="_blank" rel="noopener">${t(k)}</a>`))
+    ].join("");
+    return `<div class="trk">
+      <span class="n">${i+1}</span>
+      <span class="nm"><a href="${ytm("RESCENE " + clean(nm))}" target="_blank" rel="noopener"><span class="play">▶</span>${esc(nm)}</a>${isTitle ? '<span class="badge">TITLE</span>' : ""}${sub ? `<span class="sub">${esc(sub)}</span>` : ""}</span>
+      ${extras ? `<span class="row">${extras}</span>` : ""}</div>`;
+  }).join("");
+  const albumSp = (r.specials || []).map(([k,q]) => `<a class="pill sm" href="${yt(q)}" target="_blank" rel="noopener">${t(k)}</a>`).join("");
+  const song = r.tracks[stageSong] || r.tracks[0];
+  const kw = song[2];
+  const qAll = `리센느 ${kw} 무대 직캠 풀캠`;
+  const qMem = m => `리센느 ${m.name.ko} ${kw} 무대 직캠 풀캠 얼빡캠 페이스캠`;
+  $("#sheet").innerHTML = `<button class="x" data-close aria-label="close">×</button>
+    <div class="top">
+      <div>${coverHTML(r)}
+        ${assets ? `<div class="upl">
+          <label class="pill sm" id="upBtn">${covers[r.id] ? t("coverRe") : t("coverUp")}<input type="file" accept="image/*" id="upIn"></label>
+          ${coverDocs[r.id] ? `<button class="pill sm" id="upDel">${t("coverDel")}</button>` : ""}
+        </div><p class="note" id="upMsg" style="margin:6px 0 0">${t("coverHint")}</p>` : ""}
+      </div>
+      <div>
+        <div class="k">${esc(L(r.kind))} · ${fmt(r.date)}</div>
+        <div class="t">${esc(r.title)}</div>
+        <p>${esc(L(r.desc))}</p>
+        ${r.scent ? `<div style="margin-top:12px"><span class="chip"><span class="dot" style="background:${r.color}"></span>${esc(L(r.scent))}</span></div>` : ""}
+        ${albumSp ? `<div class="row" style="margin-top:12px">${albumSp}</div>` : ""}
+      </div>
+    </div>
+    <div class="body">
+      <div class="box">
+        <h4>${t("tracks")}</h4>
+        ${rows}
+        <p class="note" style="margin:10px 0 0">${t("trackHint")}</p>
+      </div>
+      <div class="box">
+        <h4>${t("findStage")}</h4>
+        <div class="row">${r.tracks.map((tr, i) => `<button class="pill sm ${i===stageSong?"on":""}" data-song="${i}">${esc(tr[0])}</button>`).join("")}</div>
+        <div class="row" style="margin-top:10px">
+          <a class="pill" href="${yt(qAll)}" target="_blank" rel="noopener">${t("everyone")} ↗</a>
+          ${MEMBERS.map(m => `<a class="pill" href="${yt(qMem(m))}" target="_blank" rel="noopener"><span class="dot" style="background:${m.color}"></span>${esc(memberName(m))} ↗</a>`).join("")}
+        </div>
+        <p class="note" style="margin:10px 0 0">${t("findHint")}</p>
+      </div>
+      ${r.scent ? `<div><a class="btn" href="#scent" data-goscent="${r.id}">✿ ${t("voteScent")}</a></div>` : ""}
+    </div>`;
+  $("#modal").classList.add("on");
+  $("#sheet [data-close]").onclick = closeModal;
+  const upIn = $("#upIn");
+  if(upIn) upIn.onchange = () => upIn.files[0] && uploadCover(id, upIn.files[0]);
+  const upDel = $("#upDel");
+  if(upDel) upDel.onclick = () => removeCover(id);
+  $("#sheet").querySelectorAll("[data-song]").forEach(b => b.onclick = () => { stageSong = Number(b.dataset.song); openAlbum(id, true); });
+  const go = $("#sheet [data-goscent]");
+  if(go) go.onclick = () => { closeModal(); scentAlbum = id; renderScent(); showTab("scent"); };
+}
+function closeModal(){ $("#modal").classList.remove("on"); openId = null; }
+$("#modal").onclick = e => { if(e.target.id === "modal") closeModal(); };
+document.addEventListener("keydown", e => { if(e.key === "Escape") closeModal(); });
+
+/* ================= schedule ================= */
+let schedYear = "2026", schedCat = "all";
+function renderSchedule(){
+  const years = [...new Set(EVENTS.map(e => e.d.slice(0,4)))].sort().reverse();
+  $("#schedYears").innerHTML = [["all", t("all")], ...years.map(y => [y, y])].map(([v,lbl]) => `<button class="pill ${v===schedYear?"on":""}" data-y="${v}">${lbl}</button>`).join("")
+    + `<a class="pill ghost" style="margin-left:auto" href="https://artist.mnetplus.world/main/stg/rescene-official/schedule/2026/11" target="_blank" rel="noopener">${t("officialSched")} ↗</a>`;
+  $("#schedYears").querySelectorAll("[data-y]").forEach(b => b.onclick = () => { schedYear = b.dataset.y; renderSchedule(); });
+  const cats = ["all","release","broadcast","event","uni","awards"];
+  $("#schedCats").innerHTML = cats.map(c => `<button class="pill sm ${c===schedCat?"on":""}" data-c="${c}">${c==="all" ? t("all") : c==="uni" ? t("catUni") : t(CAT_KEY[c])}</button>`).join("");
+  $("#schedCats").querySelectorAll("[data-c]").forEach(b => b.onclick = () => { schedCat = b.dataset.c; renderSchedule(); });
+  $("#schedNote").textContent = t("schedNote");
+
+  const list = EVENTS.filter(e => (schedYear === "all" || e.d.startsWith(schedYear)) && (schedCat === "all" || (schedCat === "uni" ? e.uni : e.c === schedCat)))
+                     .sort((a,b) => b.d.localeCompare(a.d));
+  let html = "", month = "";
+  list.forEach(e => {
+    const ym = e.d.slice(0,7);
+    if(ym !== month){ month = ym; html += `<div class="month">${monthLabel(ym)}</div>`; }
+    const code = yymmdd(e.d);
+    const kws = [code, ...e.kw.split(" "), "리센느"].filter(Boolean);
+    const base = `${code} 리센느 ${e.kw}`;
+    html += `<div class="ev">
+      <div class="day"><b>${Number(e.d.slice(8,10))}</b><span>${weekday(e.d)}</span></div>
+      <div>
+        <div class="ttl"><span class="cat"><span class="dot" style="background:${CAT_COLOR[e.c]}"></span>${t(CAT_KEY[e.c])}</span>${e.uni ? `<span class="cat">${t("catUni")}</span>` : ""}${esc(L(e.t))}</div>
+        ${e.p ? `<div class="pl">📍 ${esc(L(e.p))}</div>` : ""}
+        ${e.win ? `<div class="win">🏆 ${t("won")} · ${esc(L(e.win))}</div>` : ""}
+        <div class="tags">${kws.map(k => `<span class="tag">#${esc(k)}</span>`).join("")}</div>
+        <div class="acts">
+          <a class="pill sm" href="${yt(base)}" target="_blank" rel="noopener">${t("everyone")} ↗</a>
+          ${MEMBERS.map(m => `<a class="pill sm" href="${yt(e.c === "broadcast" ? `${code} 리센느 ${m.name.ko} ${e.kw}` : `${code} 리센느 ${m.name.ko} 직캠 ${e.kw}`)}" target="_blank" rel="noopener"><span class="dot" style="background:${m.color}"></span>${esc(memberName(m))}</a>`).join("")}
+        </div>
+      </div></div>`;
+  });
+  $("#sched").innerHTML = html;
+}
+
+/* ================= members ================= */
+function renderMembers(){
+  $("#mgrid").innerHTML = MEMBERS.map(m => `<div class="mem">
+      <div><div class="nm"><span class="dot" style="background:${m.color};width:10px;height:10px"></span>${esc(memberName(m))}</div><div class="en">${m.en}</div></div>
+      <span class="home">${esc(L(m.home))} ${t("hometown")}${m.amb ? " · " + t("ambassador") : ""}</span>
+      <div class="grp">
+        <a href="${yt("리센느 " + m.name.ko + " 직캠")}" target="_blank" rel="noopener"><span>${t("fancam")}</span><span>↗</span></a>
+        <a href="${yt("RESCENE " + m.fc + " focus cam")}" target="_blank" rel="noopener"><span>${t("focusCam")}</span><span>↗</span></a>
+        <a href="${yt("리센느 " + m.name.ko + " 예능 출연")}" target="_blank" rel="noopener"><span>${t("external")}</span><span>↗</span></a>
+        ${m.id === "woni" ? `<a href="${yt("안녕하세요원이입니다잘부탁드립니다")}" target="_blank" rel="noopener"><span>${t("ownChannel")}</span><span>↗</span></a>` : ""}
+      </div></div>`).join("");
+}
+
+/* ================= scent & voting ================= */
+let scentAlbum = "pulse";
+let db = null, me = null, canVote = false, writing = false;
+let votesDocs = [], nomDocs = [], myVote = {}, myNoms = [];
+let statusKey = "vLoading";
+const scentAlbums = () => RELEASES.filter(r => r.scent);
+
+function candidatesFor(album){
+  const cur = (CURATED[album] || []).map(c => ({id:c.id, brand:c.brand, name:c.name, notes:(LANG==="ko" ? c.notes.ko : c.notes.en), why:L(c.why), curated:true}));
+  const noms = [];
+  nomDocs.forEach(d => (d.items || []).forEach(n => {
+    if(n && n.album === album && n.id && n.brand && n.name) noms.push({id:String(n.id), brand:String(n.brand).slice(0,40), name:String(n.name).slice(0,60),
+      notes:String(n.notes||"").split(",").map(s => s.trim()).filter(Boolean).slice(0,6), why:String(n.why||"").slice(0,120), curated:false});
+  }));
+  return cur.concat(noms);
+}
+function tally(album){
+  const counts = {}, memos = {};
+  votesDocs.forEach(d => {
+    const v = d.picks && d.picks[album];
+    if(typeof v !== "string") return;
+    counts[v] = (counts[v] || 0) + 1;
+    const m = d.memos && d.memos[album];
+    if(typeof m === "string" && m.trim()) (memos[v] = memos[v] || []).push(m.trim().slice(0,80));
+  });
+  return {counts, memos};
+}
+function setStatus(k){ statusKey = k; $("#vstatus").textContent = t(k); }
+
+function renderScent(){
+  const albums = scentAlbums();
+  if(!albums.some(r => r.id === scentAlbum)) scentAlbum = "pulse";
+  $("#scentAlbums").innerHTML = albums.map(r => `<button class="pill ${r.id===scentAlbum?"on":""}" data-a="${r.id}">${esc(r.title)}</button>`).join("");
+  $("#scentAlbums").querySelectorAll("[data-a]").forEach(b => b.onclick = () => { scentAlbum = b.dataset.a; renderScent(); });
+  const r = relById(scentAlbum);
+  $("#scentHead").innerHTML = `<div class="shead">${coverHTML(r)}
+      <div><div class="lbl">${esc(L(r.kind))} · ${fmt(r.date)}</div><div class="nm">${esc(r.title)}</div>
+      <div style="margin-top:8px"><span class="chip"><span class="dot" style="background:${r.color}"></span>${esc(L(r.scent))}</span></div>
+      <p>${esc(L(r.desc))}</p></div></div>`;
+  $("#vstatus").textContent = t(statusKey);
+
+  const cands = candidatesFor(scentAlbum);
+  const {counts, memos} = tally(scentAlbum);
+  const total = Object.values(counts).reduce((a,b) => a+b, 0);
+  cands.forEach(c => c.n = counts[c.id] || 0);
+  cands.sort((a,b) => b.n - a.n || (b.curated - a.curated));
+  const mine = myVote.picks ? myVote.picks[scentAlbum] : null;
+  const top = cands.length && cands[0].n ? cands[0].n : 0;
+  $("#cands").innerHTML = cands.length ? cands.map((c, i) => {
+    const pct = total ? Math.round(c.n / total * 100) : 0;
+    const isMine = mine === c.id;
+    return `<div class="cand ${isMine ? "mine" : ""}" style="--tint:${r.color}">
+      <div class="bar" style="width:${pct}%"></div>
+      <div class="tp">
+        <div class="rank">${c.n && c.n === top ? "♛" : i + 1}</div>
+        <div class="info">
+          <div class="br">${esc(c.brand)}</div><div class="pn">${esc(c.name)}</div>
+          ${c.notes.length ? `<div class="notes">${c.notes.map(n => `<span>${esc(n)}</span>`).join("")}</div>` : ""}
+          ${c.why ? `<div class="why">${esc(c.why)}</div>` : ""}
+          ${c.curated ? "" : `<div class="by">${t("fanPick")}</div>`}
+          ${(memos[c.id] || []).length ? `<div class="memos">${memos[c.id].slice(0,3).map(m => `<q>${esc(m)}</q>`).join("")}</div>` : ""}
+          ${isMine ? `<div class="memo"><input type="text" maxlength="80" id="memoIn" placeholder="${esc(t("memoPh"))}" value="${esc((myVote.memos||{})[scentAlbum] || "")}"><button class="vote" id="memoSave">${t("memoSave")}</button></div>` : ""}
+        </div>
+        <div class="side">
+          <div class="cnt">${c.n}</div><div class="pct">${total ? pct + "%" : t("votes")}</div>
+          <button class="vote ${isMine ? "on" : ""}" data-v="${esc(c.id)}" ${canVote ? "" : "disabled"}>${isMine ? t("myPick") : t("pick")}</button>
+        </div>
+      </div></div>`;
+  }).join("") : `<div class="note" style="padding:24px 4px">${t("noCands")}</div>`;
+  $("#cands").querySelectorAll("[data-v]").forEach(b => b.onclick = () => castVote(b.dataset.v));
+  const ms = $("#memoSave");
+  if(ms) ms.onclick = () => saveMemo($("#memoIn").value);
+  $("#nomForm").querySelector("button").disabled = !canVote;
+}
+async function writeMyVote(next){
+  if(!db || !me || writing) return;
+  writing = true;
+  try { await db.doc("votes/" + me).set(next); myVote = next; }
+  catch(e){ voteError(e); }
+  finally { writing = false; renderScent(); }
+}
+function castVote(cid){
+  const picks = {...(myVote.picks || {})}, memos = {...(myVote.memos || {})};
+  if(picks[scentAlbum] === cid){ delete picks[scentAlbum]; delete memos[scentAlbum]; }
+  else { delete memos[scentAlbum]; picks[scentAlbum] = cid; }
+  writeMyVote({picks, memos, at: Date.now()});
+}
+function saveMemo(text){
+  const memos = {...(myVote.memos || {})};
+  const s = String(text || "").trim().slice(0,80);
+  if(s) memos[scentAlbum] = s; else delete memos[scentAlbum];
+  writeMyVote({picks: {...(myVote.picks || {})}, memos, at: Date.now()});
+}
+$("#nomForm").onsubmit = async e => {
+  e.preventDefault();
+  if(!db || !me || writing) return;
+  const item = {id:"n-" + Date.now().toString(36) + Math.random().toString(36).slice(2,6), album: scentAlbum,
+    brand:$("#nBrand").value.trim(), name:$("#nName").value.trim(), notes:$("#nNotes").value.trim(), why:$("#nWhy").value.trim(), at:Date.now()};
+  if(!item.brand || !item.name) return;
+  const norm = s => s.replace(/\s/g,"").toLowerCase();
+  if(candidatesFor(scentAlbum).some(c => norm(c.brand + c.name) === norm(item.brand + item.name))){ $("#nomMsg").textContent = t("nomDup"); return; }
+  const next = [...myNoms, item].slice(-30);
+  writing = true;
+  try { await db.doc("nominations/" + me).set({items: next}); myNoms = next; $("#nomForm").reset(); $("#nomMsg").textContent = t("nomOk"); }
+  catch(err){ voteError(err); }
+  finally { writing = false; renderScent(); }
+};
+function voteError(e){
+  const code = e && e.code;
+  if(code === "invalid_argument" || code === "not_granted" || code === "revoked"){ canVote = false; setStatus("vDenied"); }
+  else if(code === "quota_exceeded") setStatus("vFull");
+  else setStatus("vRetry");
+}
+let assets = null, coverDocs = {};
+async function uploadCover(albumId, file){
+  if(!assets || !db) return;
+  const msg = $("#upMsg"); if(msg) msg.textContent = t("coverBusy");
+  try {
+    const res = await assets.upload(file);
+    const prev = coverDocs[albumId];
+    await db.doc("covers/" + albumId).set({id: res.id, at: Date.now()});
+    if(prev && prev.id && prev.id !== res.id){ try { await assets.delete(prev.id); } catch(e){} }
+  } catch(e){ if(msg) msg.textContent = t("coverFail"); }
+}
+async function removeCover(albumId){
+  if(!assets || !db) return;
+  const prev = coverDocs[albumId];
+  try { await db.doc("covers/" + albumId).delete(); if(prev && prev.id){ try { await assets.delete(prev.id); } catch(e){} } } catch(e){}
+}
+function watchCovers(){
+  db.collection("covers").onSnapshot(snap => {
+    coverDocs = {}; covers = {};
+    snap.docs.filter(d => d.exists).forEach(d => {
+      const v = d.data();
+      if(v && typeof v.id === "string" && /^[A-Za-z0-9_.:@+~-]+$/.test(v.id)){ coverDocs[d.id] = v; covers[d.id] = "/_blob/" + v.id; }
+    });
+    renderAlbums(); renderScent();
+    if($("#modal").classList.contains("on") && openId) openAlbum(openId, true);
+  }, () => {});
+}
+async function initVoting(){
+  setStatus("vLoading");
+  let user = null;
+  try { [db, user] = await Promise.all([window.claude ? claude.use("db") : null, window.claude ? claude.use("user") : null]); } catch(e){ db = null; }
+  if(!db){ setStatus("vNoDb"); renderScent(); return; }
+  try { assets = await claude.use("assets"); } catch(e){ assets = null; }
+  watchCovers();
+  try { me = user ? await user.id() : null; } catch(e){ me = null; }
+  let allowed = null;
+  try { allowed = user ? await user.can("data.write") : null; } catch(e){}
+  canVote = !!me && allowed !== false;
+  let loaded = 0, v1 = false, v2 = false;
+  const timer = setTimeout(() => { if(loaded < 2) setStatus("vSlow"); }, 10000);
+  const ready = () => { if(++loaded === 2){ clearTimeout(timer); setStatus(canVote ? "vReady" : "vReadOnly"); } };
+  db.collection("votes").onSnapshot(snap => {
+    votesDocs = snap.docs.filter(d => d.exists).map(d => ({id:d.id, ...d.data()}));
+    const mineDoc = votesDocs.find(d => d.id === me);
+    if(mineDoc && !writing) myVote = {picks:{...(mineDoc.picks||{})}, memos:{...(mineDoc.memos||{})}};
+    if(!snap.metadata.fromCache && !v1){ v1 = true; ready(); }
+    renderScent();
+  }, () => { clearTimeout(timer); setStatus("vFail"); });
+  db.collection("nominations").onSnapshot(snap => {
+    nomDocs = snap.docs.filter(d => d.exists).map(d => ({id:d.id, ...d.data()}));
+    const mineDoc = nomDocs.find(d => d.id === me);
+    if(mineDoc && !writing) myNoms = Array.isArray(mineDoc.items) ? mineDoc.items.slice() : [];
+    if(!snap.metadata.fromCache && !v2){ v2 = true; ready(); }
+    renderScent();
+  }, () => {});
+  renderScent();
+}
+
+/* ================= boot ================= */
+function renderStatic(){ document.querySelectorAll("[data-i]").forEach(el => el.textContent = t(el.dataset.i)); }
+function renderAll(){
+  renderLangMenu(); renderStatic(); renderTabs(); renderAlbums(); renderSchedule(); renderMembers(); renderScent();
+  if($("#modal").classList.contains("on") && openId) openAlbum(openId, true);
+}
+document.documentElement.lang = LANG;
+showTab(location.hash.slice(1));
+renderAll();
+initVoting();
+</script>
+</body>
+</html>
